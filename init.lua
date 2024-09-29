@@ -13,5 +13,7 @@ vim.keymap.set('n', '<DOWN>', function () return ':cn<CR>' end, { silent = true,
 vim.keymap.set('n', '<UP>', function () return ':cp<CR>' end, { silent = true, expr = true })
 vim.keymap.set('n', '<RIGHT>', function () return ':cope<CR>' end, { silent = true, expr = true })
 vim.keymap.set('n', '<LEFT>', function () return ':cclo<CR>' end, { silent = true, expr = true })
+vim.keymap.set('n', '<F1>', function () end, { silent = true, expr = true })
+vim.keymap.set('i', '<F1>', function () end, { silent = true, expr = true })
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
