@@ -10,10 +10,11 @@ return {
     bigfile = { enabled = true },
     dashboard = { enabled = false },
     explorer = { enabled = false },
+    terminal = { enabled = true },
     indent = { enabled = false },
     input = { enabled = false },
     picker = { enabled = true },
-    notifier = { enabled = false },
+    notifier = { enabled = true },
     quickfile = { enabled = false },
     scope = { enabled = false },
     scroll = { enabled = false },
@@ -36,7 +37,9 @@ return {
     { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
     { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
     { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
-    { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
+    { "<leader>fp", function() Snacks.picker.projects({
+        projects = { "~/dev/git", },
+        }) end, desc = "Projects" },
     { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
     -- git
     { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
@@ -80,5 +83,7 @@ return {
     { "<leader>sR", function() Snacks.picker.resume() end, desc = "Resume" },
     { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
     { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
+
+    { "<leader>tt", function() Snacks.picker.terminal() end, desc = "Terminal" },
   },
 }
