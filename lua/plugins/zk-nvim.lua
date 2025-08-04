@@ -4,7 +4,12 @@ return {
     config = function()
         require("zk").setup({
         -- See Setup section below
-            picker = "fzf_lua"
+       --  picker = "fzf_lua"
+            snacks_picker = {
+                layout = {
+                    preset = "ivy",
+                }
+            },
         })
     end
 }
