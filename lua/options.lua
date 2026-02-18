@@ -13,6 +13,9 @@ vim.opt.number = true
 vim.opt.mouse = "a"
 -- vim.opt.shada = ''
 
+-- Ignore target directories 
+vim.opt.wildignore:append { "**/target/**" }
+
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
