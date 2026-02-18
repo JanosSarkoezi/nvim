@@ -15,6 +15,12 @@ vim.opt.mouse = "a"
 
 -- Ignore target directories 
 vim.opt.wildignore:append { "**/target/**" }
+-- Suche erst in lokalen tags, dann in den JDK tags
+vim.opt.tags = {
+  "./tags",           -- Tags im aktuellen Verzeichnis (Projekt)
+  "tags",             -- Tags im Arbeitsverzeichnis
+  os.getenv("HOME") .. "/dev/java/src/tags" -- Dein globaler JDK-Index
+}
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
@@ -70,6 +76,8 @@ vim.opt.tabstop = 4
 -- Folding
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
 vim.opt.foldlevel = 99
 
 -- Am ende der Suche nicht neu oben anfangen
