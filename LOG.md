@@ -6,6 +6,10 @@
 - **Live Grep**: Funktion `M.live_grep` in `core_tools.lua` (Keymap `<leader>fg`). Nutzt `rg --vimgrep`.
 - **Verzeichnissuche**: Funktion `M.find_directories` (Keymap `<leader>fd`) zum schnellen Wechseln des Arbeitsverzeichnisses (`cd`).
 - **Quickfix-Integration**: `<C-q>` im Picker nutzt nun `efm`, um Grep-Ergebnisse (`pfad:zeile:spalte`) korrekt in die Quickfix-Liste zu überführen.
+- **Quickfix Stack**: Unterstützung für mehrere Quickfix-Listen (Stack). 
+    - `<leader>co`: Gehe zur älteren Liste (`:colder`).
+    - `<leader>cn`: Gehe zur neueren Liste (`:cnewer`).
+    - In `core_tools.lua` erstellt `<C-q>` nun eine neue Liste im Stack (`setqflist({}, " ")`).
 
 ### Geändert
 - **Picker-Höhe**: Das Picker-Fenster (`M.open_picker`) ist nun standardmäßig auf 12 Zeilen begrenzt und wird mit `botright` am unteren Rand geöffnet.

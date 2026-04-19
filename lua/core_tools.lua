@@ -34,14 +34,19 @@ function M.open_picker(items, title, callback)
     -- <C-q> überträgt alle sichtbaren Zeilen in die Quickfix-Liste
     vim.keymap.set("n", "<C-q>", function()
         local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-        -- Nutzt ein Errorformat, das sowohl grep (file:line:col:text) als auch einfache Dateilisten versteht
-        vim.fn.setqflist({}, "r", {
+        -- Nutzt " " statt "r", um eine NEUE Liste im Stack zu erstellen
+        vim.fn.setqflist({}, " ", {
             title = title,
             lines = lines,
             efm = "%f:%l:%c:%m,%f"
         })
         vim.api.nvim_win_close(winnr, true)
         vim.cmd("copen")
+        
+        -- Info über den Quickfix-Stack ausgeben
+        local qf_nr = vim.fn.getqflist({nr = 0}).nr
+        local qf_total = vim.fn.getqflist({nr = "$"}).nr
+        print(string.format("Quickfix-Stack: %d/%d", qf_nr, qf_total))
     end, opts)
 
     -- q / <Esc> bricht ab

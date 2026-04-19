@@ -47,6 +47,21 @@ end
 map('n', '<DOWN>', function() move_quickfix("next") end, { silent = true })
 map('n', '<UP>',   function() move_quickfix("prev") end, { silent = true })
 
+-- Quickfix-Stack Navigation (Colder/Cnewer)
+local function navigate_qf_stack(cmd)
+  local ok = pcall(vim.cmd, cmd)
+  if ok then
+    local qf_info = vim.fn.getqflist({nr = 0, title = 1})
+    local qf_total = vim.fn.getqflist({nr = "$"}).nr
+    print(string.format("Quickfix [%d/%d]: %s", qf_info.nr, qf_total, qf_info.title))
+  else
+    print("Quickfix: Keine weiteren Listen vorhanden!")
+  end
+end
+
+map("n", "<Leader>co", function() navigate_qf_stack("colder") end, { desc = "Ältere Quickfix-Liste" })
+map("n", "<Leader>cn", function() navigate_qf_stack("cnewer") end, { desc = "Neuere Quickfix-Liste" })
+
 -- Deine restlichen Binds (ohne expr = true, da nicht benötigt)
 map('n', '<RIGHT>', ':cope<CR>', { silent = true })
 map('n', '<LEFT>',  ':cclo<CR>', { silent = true })
