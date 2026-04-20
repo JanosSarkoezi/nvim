@@ -31,6 +31,12 @@ map("n", "<leader>fg", core.live_grep, { desc = "Live Grep" })
 map("n", "<leader>fd", core.find_directories, { desc = "Verzeichnisse suchen" })
 map("n", "<Leader>h", ":nohlsearch<CR>", { desc = "Such-Highlighting aufheben" })
 
+-- Git Tools
+map("n", "<Leader>gl", core.git_log, { desc = "Git Log (Datei)" })
+map("n", "<Leader>gL", core.git_log_line, { desc = "Git Log (Zeile)" })
+map("n", "<Leader>gb", core.git_blame_line, { desc = "Git Blame (Zeile)" })
+map("n", "<Leader>gs", core.git_status, { desc = "Git Status" })
+
 local function move_quickfix(direction)
     local cmd = direction == "next" and "cnext" or "cprev"
     local message = direction == "next" and "unten" or "oben"

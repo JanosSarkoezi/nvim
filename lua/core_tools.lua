@@ -132,4 +132,99 @@ function M.find_directories()
     end)
 end
 
+-- --- 5. GIT-TOOLS ---
+
+-- Hilfsfunktion zur Anzeige von Git-Output in einem Scratch-Buffer
+function M.show_git_output(cmd, title, filetype)
+    local output = vim.fn.systemlist(cmd)
+    if #output == 0 then
+        print("Keine Ausgabe für: " .. cmd)
+        return
+    end
+
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_option(bufnr, "buftype", "nofile")
+    vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
+    vim.api.nvim_buf_set_option(bufnr, "swapfile", false)
+    vim.api.nvim_buf_set_name(bufnr, title or "Git Output")
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
+    
+    if filetype then
+        vim.api.nvim_buf_set_option(bufnr, "filetype", filetype)
+    end
+
+    vim.cmd("vertical botright split")
+    local winnr = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(winnr, bufnr)
+    
+    local opts = { buffer = bufnr, silent = true }
+    vim.keymap.set("n", "q", function() vim.api.nvim_win_close(winnr, true) end, opts)
+    vim.keymap.set("n", "<Esc>", function() vim.api.nvim_win_close(winnr, true) end, opts)
+end
+
+-- Zeigt das Git-Log für die aktuelle Datei
+function M.git_log()
+    local file = vim.fn.expand("%")
+    if file == "" then return end
+    -- Nur Dateien innerhalb des Git-Repos zulassen
+    if vim.fn.system("git rev-parse --is-inside-work-tree"):match("false") then
+        print("Nicht in einem Git-Repository.")
+        return
+    end
+
+    local cmd = "git log --pretty=format:'%h %ad | %s [%an]' --date=short -- " .. vim.fn.shellescape(file)
+    local results = vim.fn.systemlist(cmd)
+    
+    if #results == 0 then
+        print("Kein Log für diese Datei gefunden.")
+        return
+    end
+
+    M.open_picker(results, "Git Log: " .. file, function(selected)
+        local hash = selected:match("^(%x+)")
+        if hash then
+            M.show_git_output("git show " .. hash .. " -- " .. vim.fn.shellescape(file), "Commit: " .. hash, "diff")
+        end
+    end)
+end
+
+-- Zeigt die Historie für die aktuelle Zeile
+function M.git_log_line()
+    local file = vim.fn.expand("%")
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+    if file == "" then return end
+    
+    -- Nutzt git log -L, um Änderungen an dieser Zeile zu zeigen
+    local cmd = "git log -L " .. line .. "," .. line .. ":" .. vim.fn.shellescape(file)
+    M.show_git_output(cmd, "Line History: " .. line, "diff")
+end
+
+-- Zeigt Blame-Informationen für die aktuelle Zeile
+function M.git_blame_line()
+    local file = vim.fn.expand("%")
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+    if file == "" then return end
+    
+    local cmd = "git blame -L " .. line .. "," .. line .. " " .. vim.fn.shellescape(file)
+    local result = vim.fn.systemlist(cmd)[1]
+    if result then
+        print(result)
+    end
+end
+
+-- Zeigt den Git-Status und erlaubt das Diffen von Dateien
+function M.git_status()
+    local results = vim.fn.systemlist("git status -s")
+    if #results == 0 then
+        print("Git-Status: Alles sauber (Clean).")
+        return
+    end
+    
+    M.open_picker(results, "Git Status (Änderungen)", function(selected)
+        -- Das Format von git status -s ist "XY path"
+        local file = selected:sub(4)
+        M.show_git_output("git diff " .. vim.fn.shellescape(file), "Diff: " .. file, "diff")
+    end)
+end
+
 return M

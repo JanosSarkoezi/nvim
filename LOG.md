@@ -1,5 +1,17 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-04-20] - Git-Integration (Buffer-First)
+
+### Hinzugefügt
+- **Git Log (Datei)**: `<Leader>gl` öffnet die Historie der aktuellen Datei im Picker. Auswahl zeigt den Commit-Diff in einem Split-Fenster.
+- **Git Log (Zeile)**: `<Leader>gL` verfolgt die Entwicklung der aktuellen Zeile (`git log -L`). Zeigt Änderungen direkt im Split-Fenster an.
+- **Git Blame (Zeile)**: `<Leader>gb` gibt Autor, Datum und Commit der aktuellen Zeile in der Kommandozeile aus.
+- **Git Status**: `<Leader>gs` listet geänderte Dateien im Picker auf. Auswahl öffnet das `git diff` im Split-Fenster.
+- **Hilfsfunktion `show_git_output`**: Zentrale Logik in `core_tools.lua` zur Anzeige von Git-Outputs in vertikalen Scratch-Buffern inklusive Syntax-Highlighting (`filetype=diff`).
+
+### Geändert
+- **Keymaps**: Erweiterung von `lua/keymaps.lua` um das `<Leader>g` Präfix für alle Git-Operationen.
+
 ## [2026-04-19] - Picker-Optimierung & Grep-Integration
 
 ### Hinzugefügt
