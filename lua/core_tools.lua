@@ -227,4 +227,33 @@ function M.git_status()
     end)
 end
 
+-- --- 6. HILFE & ÜBERSICHT ---
+
+-- Zeigt alle Keymaps mit einer Beschreibung (desc) im Picker an
+function M.show_keymaps()
+    local maps = vim.api.nvim_get_keymap("n")
+    local lines = {}
+    
+    for _, map in ipairs(maps) do
+        if map.desc then
+            -- Formatiere: "LHS | Beschreibung"
+            -- Wir ersetzen das Leerzeichen (Leader) durch <Leader> für bessere Lesbarkeit
+            local lhs = map.lhs:gsub(" ", "<Leader>")
+            table.insert(lines, string.format("%-12s │ %s", lhs, map.desc))
+        end
+    end
+    
+    table.sort(lines)
+    
+    if #lines == 0 then
+        print("Keine Keymaps mit Beschreibung gefunden.")
+        return
+    end
+
+    M.open_picker(lines, "Keymap-Übersicht", function(selected)
+        -- Optional: Bei <CR> könnte man die Keymap erklären oder ausführen
+        -- Fürs Erste reicht die Übersicht
+    end)
+end
+
 return M

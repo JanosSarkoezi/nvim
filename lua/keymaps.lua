@@ -37,6 +37,9 @@ map("n", "<Leader>gL", core.git_log_line, { desc = "Git Log (Zeile)" })
 map("n", "<Leader>gb", core.git_blame_line, { desc = "Git Blame (Zeile)" })
 map("n", "<Leader>gs", core.git_status, { desc = "Git Status" })
 
+-- Hilfe & Übersicht
+map("n", "<Leader>?", core.show_keymaps, { desc = "Keymap-Übersicht zeigen" })
+
 local function move_quickfix(direction)
     local cmd = direction == "next" and "cnext" or "cprev"
     local message = direction == "next" and "unten" or "oben"

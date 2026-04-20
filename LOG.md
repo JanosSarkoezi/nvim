@@ -8,6 +8,7 @@
 - **Git Blame (Zeile)**: `<Leader>gb` gibt Autor, Datum und Commit der aktuellen Zeile in der Kommandozeile aus.
 - **Git Status**: `<Leader>gs` listet geänderte Dateien im Picker auf. Auswahl öffnet das `git diff` im Split-Fenster.
 - **Hilfsfunktion `show_git_output`**: Zentrale Logik in `core_tools.lua` zur Anzeige von Git-Outputs in vertikalen Scratch-Buffern inklusive Syntax-Highlighting (`filetype=diff`).
+- **Keymap-Übersicht**: `<Leader>?` zeigt alle definierten Keymaps mit Beschreibung im Picker an. Die Liste wird dynamisch aus den Neovim-Daten generiert.
 
 ### Geändert
 - **Keymaps**: Erweiterung von `lua/keymaps.lua` um das `<Leader>g` Präfix für alle Git-Operationen.
