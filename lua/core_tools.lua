@@ -188,15 +188,33 @@ function M.git_log()
     end)
 end
 
--- Zeigt die Historie für die aktuelle Zeile
-function M.git_log_line()
+-- Zeigt die Historie für den markierten Bereich oder die aktuelle Zeile
+function M.git_log_range()
     local file = vim.fn.expand("%")
-    local line = vim.api.nvim_win_get_cursor(0)[1]
     if file == "" then return end
+
+    -- Prüfen, ob wir in einem Visual Mode sind
+    local mode = vim.fn.mode()
+    local start_line, end_line
+
+    if mode:match("[vV]") then
+        start_line = vim.fn.line("v")
+        end_line = vim.fn.line(".")
+        -- Visual Mode verlassen, um Cursor-Positionen zu fixieren
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+    else
+        start_line = vim.api.nvim_win_get_cursor(0)[1]
+        end_line = start_line
+    end
+
+    -- Sicherstellen, dass start_line <= end_line ist
+    if start_line > end_line then
+        start_line, end_line = end_line, start_line
+    end
     
-    -- Nutzt git log -L, um Änderungen an dieser Zeile zu zeigen
-    local cmd = "git log -L " .. line .. "," .. line .. ":" .. vim.fn.shellescape(file)
-    M.show_git_output(cmd, "Line History: " .. line, "diff")
+    -- Nutzt git log -L <start>,<end>:<file>, um Änderungen zu zeigen
+    local cmd = "git log -L " .. start_line .. "," .. end_line .. ":" .. vim.fn.shellescape(file)
+    M.show_git_output(cmd, "Range History: " .. start_line .. "-" .. end_line, "diff")
 end
 
 -- Zeigt Blame-Informationen für die aktuelle Zeile
