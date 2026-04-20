@@ -33,3 +33,4 @@
 - **Chaining/Narrowing**: Eine experimentelle "Suche in Auswahl"-Funktion wurde nach Nutzertest zurückgerollt, um den Fokus auf Einfachheit zu legen.
 - **GEMINI.md Update**: Mandat zur Führung der `LOG.md` hinzugefügt.
 - 2026-04-20: git_log_range implementiert. Unterstützt nun git log -L für markierte Bereiche im Visual Mode (<Leader>gL).
+- 2026-04-20: Manuelle Anpassungen in lua/keymaps.lua: F1-Mapping und Fluchtweg aus dem Terminal-Mode (<Esc><Esc>).
