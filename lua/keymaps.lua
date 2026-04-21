@@ -33,6 +33,7 @@ map("n", "<Leader>h", ":nohlsearch<CR>", { desc = "Such-Highlighting aufheben" }
 
 -- Git Tools
 map("n", "<Leader>gl", core.git_log, { desc = "Git Log (Datei)" })
+map("n", "<Leader>ga", core.git_log_project, { desc = "Git Log (Projekt)" })
 map({"n", "v"}, "<Leader>gL", core.git_log_range, { desc = "Git Log (Range)" })
 map("n", "<Leader>gb", core.git_blame_line, { desc = "Git Blame (Zeile)" })
 map("n", "<Leader>gs", core.git_status, { desc = "Git Status" })

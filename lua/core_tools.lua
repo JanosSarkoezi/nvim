@@ -162,30 +162,42 @@ function M.show_git_output(cmd, title, filetype)
     vim.keymap.set("n", "<Esc>", function() vim.api.nvim_win_close(winnr, true) end, opts)
 end
 
--- Zeigt das Git-Log für die aktuelle Datei
-function M.git_log()
-    local file = vim.fn.expand("%")
-    if file == "" then return end
-    -- Nur Dateien innerhalb des Git-Repos zulassen
+-- Zeigt das Git-Log für die aktuelle Datei oder das gesamte Projekt
+function M.git_log(opts)
+    opts = opts or {}
+    local file = opts.all and "" or vim.fn.expand("%")
+    local is_project = (file == "")
+    
+    -- Nur innerhalb eines Git-Repos zulassen
     if vim.fn.system("git rev-parse --is-inside-work-tree"):match("false") then
         print("Nicht in einem Git-Repository.")
         return
     end
 
-    local cmd = "git log --pretty=format:'%h %ad | %s [%an]' --date=short -- " .. vim.fn.shellescape(file)
+    local title = is_project and "Git Log (Projekt)" or ("Git Log: " .. file)
+    local file_arg = is_project and "" or (" -- " .. vim.fn.shellescape(file))
+    local cmd = "git log --pretty=format:'%h %ad | %s [%an]' --date=short" .. file_arg
+    
     local results = vim.fn.systemlist(cmd)
     
     if #results == 0 then
-        print("Kein Log für diese Datei gefunden.")
+        print("Kein Log gefunden.")
         return
     end
 
-    M.open_picker(results, "Git Log: " .. file, function(selected)
+    M.open_picker(results, title, function(selected)
         local hash = selected:match("^(%x+)")
         if hash then
-            M.show_git_output("git show " .. hash .. " -- " .. vim.fn.shellescape(file), "Commit: " .. hash, "diff")
+            -- Zeige den Commit an (entweder für die ganze Projekt oder nur die Datei)
+            local show_cmd = "git show " .. hash .. file_arg
+            M.show_git_output(show_cmd, "Commit: " .. hash, "diff")
         end
     end)
+end
+
+-- Zeigt das globale Git-Log des Projekts
+function M.git_log_project()
+    M.git_log({ all = true })
 end
 
 -- Zeigt die Historie für den markierten Bereich oder die aktuelle Zeile

@@ -1,5 +1,14 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-04-21] - Git Log Erweiterung
+
+### Hinzugefügt
+- **Git Log (Projekt)**: `<Leader>ga` zeigt das gesamte Projekt-Log im Picker an. Auswahl öffnet den kompletten Commit-Diff.
+- **DYNAMISCHES Git Log**: `<Leader>gl` erkennt nun automatisch, ob ein Puffer offen ist. Falls nicht, wird das Projekt-Log statt eines Fehlers angezeigt.
+
+### Geändert
+- **Log-Funktionen**: `M.git_log` in `core_tools.lua` modularisiert, um Datei- und Projekt-Kontext zu unterstützen.
+
 ## [2026-04-20] - Git-Integration (Buffer-First)
 
 ### Hinzugefügt
