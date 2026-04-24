@@ -4,6 +4,7 @@
 
 ### Hinzugefügt
 - **Puffer-Picker**: `<Leader>fb` öffnet eine Liste aller geladenen Puffer im Picker.
+- **Quickfix-Picker**: `<Leader>fq` lädt die aktuelle Quickfix-Liste in den Picker zur Bearbeitung/Filterung.
 - **Terminal-Toggle**: `<Leader>t` öffnet/schließt ein Terminal-Fenster am unteren Rand. Der Terminal-Puffer bleibt im Hintergrund erhalten.
 - **Wiki-Backlinks**: `<Leader>wb` sucht nach allen Dateien, die auf die aktuelle Notiz verweisen, und zeigt sie im Picker an.
 

@@ -192,6 +192,31 @@ function M.find_directories()
     end)
 end
 
+-- Lädt die aktuelle Quickfix-Liste in den Picker
+function M.quickfix_to_picker()
+    local qflist = vim.fn.getqflist()
+    if #qflist == 0 then
+        print("Quickfix-Liste ist leer.")
+        return
+    end
+
+    local items = {}
+    for _, entry in ipairs(qflist) do
+        local fname = vim.api.nvim_buf_get_name(entry.bufnr)
+        local short_name = vim.fn.fnamemodify(fname, ":.")
+        -- Format: pfad:zeile:spalte: text
+        table.insert(items, string.format("%s:%d:%d: %s", short_name, entry.lnum, entry.col, entry.text))
+    end
+
+    M.open_picker(items, "Quickfix Bearbeiten", function(selected)
+        local parts = vim.split(selected, ":")
+        if #parts >= 3 then
+            vim.cmd("edit " .. parts[1])
+            vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
+        end
+    end)
+end
+
 -- --- 5. GIT-TOOLS ---
 
 -- Hilfsfunktion zur Anzeige von Git-Output in einem Scratch-Buffer
