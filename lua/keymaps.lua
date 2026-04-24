@@ -40,7 +40,9 @@ map("n", "<Leader>gl", core.git_log, { desc = "Git Log (Datei)" })
 map("n", "<Leader>ga", core.git_log_project, { desc = "Git Log (Projekt)" })
 map({"n", "v"}, "<Leader>gL", core.git_log_range, { desc = "Git Log (Range)" })
 map("n", "<Leader>gb", core.git_blame_line, { desc = "Git Blame (Zeile)" })
-map("n", "<Leader>gs", core.git_status, { desc = "Git Status" })
+map("n", "<Leader>gs", core.git_status, { desc = "Git Status (s=Stage, u=Unstage)" })
+map("n", "<Leader>gc", core.git_branches, { desc = "Git Checkout (Branch)" })
+map("n", "<Leader>gh", core.git_stash, { desc = "Git Stash (h=Hide/Stash)" })
 
 -- Hilfe & Übersicht
 map("n", "<Leader>?", core.show_keymaps, { desc = "Keymap-Übersicht zeigen" })

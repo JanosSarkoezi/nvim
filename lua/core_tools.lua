@@ -4,7 +4,7 @@
 local M = {}
 
 -- Zentrale Funktion für Puffer-basierte Auswahl (M.open_picker)
-function M.open_picker(items, title, callback)
+function M.open_picker(items, title, callback, extra_mappings)
     -- Neuen Scratch-Puffer erstellen
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_option_value("buftype", "nofile", { buf = bufnr })
@@ -30,6 +30,17 @@ function M.open_picker(items, title, callback)
         vim.api.nvim_win_close(winnr, true)
         if callback and selected_item ~= "" then callback(selected_item) end
     end, opts)
+
+    -- Extra Mappings (falls vorhanden)
+    if extra_mappings then
+        for key, func in pairs(extra_mappings) do
+            vim.keymap.set("n", key, function()
+                local cursor_line = vim.api.nvim_win_get_cursor(winnr)[1]
+                local selected_item = vim.api.nvim_buf_get_lines(bufnr, cursor_line - 1, cursor_line, false)[1]
+                func(selected_item, bufnr, winnr)
+            end, opts)
+        end
+    end
 
     -- <C-q> überträgt alle sichtbaren Zeilen in die Quickfix-Liste
     vim.keymap.set("n", "<C-q>", function()
@@ -328,19 +339,76 @@ function M.git_blame_line()
     end
 end
 
--- Zeigt den Git-Status und erlaubt das Diffen von Dateien
+-- Zeigt den Git-Status und erlaubt das Diffen, Staging und Unstaging
 function M.git_status()
-    local results = vim.fn.systemlist("git status -s")
-    if #results == 0 then
+    local function get_status_items()
+        return vim.fn.systemlist("git status -s")
+    end
+
+    local items = get_status_items()
+    if #items == 0 then
         print("Git-Status: Alles sauber (Clean).")
         return
     end
-    
-    M.open_picker(results, "Git Status (Änderungen)", function(selected)
-        -- Das Format von git status -s ist "XY path"
+
+    local function refresh_picker(bufnr)
+        local new_items = get_status_items()
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_items)
+        if #new_items == 0 then
+            print("Git-Status: Alles sauber.")
+        end
+    end
+
+    M.open_picker(items, "Git Status (s=Stage, u=Unstage, CR=Diff)", function(selected)
         local file = selected:sub(4)
         M.show_git_output("git diff " .. vim.fn.shellescape(file), "Diff: " .. file, "diff")
+    end, {
+        s = function(selected, bufnr)
+            local file = selected:sub(4)
+            vim.fn.system("git add " .. vim.fn.shellescape(file))
+            refresh_picker(bufnr)
+        end,
+        u = function(selected, bufnr)
+            local file = selected:sub(4)
+            vim.fn.system("git restore --staged " .. vim.fn.shellescape(file))
+            refresh_picker(bufnr)
+        end
+    })
+end
+
+-- Zeigt alle Git-Branches und erlaubt den Wechsel
+function M.git_branches()
+    local branches = vim.fn.systemlist("git branch --format='%(refname:short)'")
+    M.open_picker(branches, "Git Branches", function(selected)
+        local output = vim.fn.system("git checkout " .. vim.fn.shellescape(selected))
+        print(output)
     end)
+end
+
+-- Zeigt Git-Stashes und erlaubt das Anwenden oder Löschen
+function M.git_stash()
+    local stashes = vim.fn.systemlist("git stash list")
+    if #stashes == 0 then
+        print("Keine Stashes vorhanden.")
+        return
+    end
+
+    M.open_picker(stashes, "Git Stash (CR=Apply, d=Drop)", function(selected)
+        local id = selected:match("^(stash@{%d+})")
+        if id then
+            local output = vim.fn.system("git stash apply " .. id)
+            print(output)
+        end
+    end, {
+        d = function(selected, bufnr)
+            local id = selected:match("^(stash@{%d+})")
+            if id then
+                vim.fn.system("git stash drop " .. id)
+                local new_stashes = vim.fn.systemlist("git stash list")
+                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_stashes)
+            end
+        end
+    })
 end
 
 -- --- 6. TERMINAL TOGGLE ---

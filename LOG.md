@@ -1,8 +1,11 @@
 # LOG.md - Fortschritt & Änderungen
 
-## [2026-04-24] - Neue Features: Buffer-Picker, Terminal & Wiki-Backlinks
+## [2026-04-24] - Neue Features: Buffer-First Tools (Git, Quickfix, Terminal, Wiki)
 
 ### Hinzugefügt
+- **Interaktiver Git-Status**: `<Leader>gs` erlaubt nun das Stagen (`s`) und Unstagen (`u`) von Dateien direkt im Picker.
+- **Git Branch-Switcher**: `<Leader>gc` (Checkout) zeigt alle Branches im Picker an.
+- **Git Stash-Picker**: `<Leader>gh` zeigt Stashes an. Auswahl macht `apply`, `d` macht `drop`.
 - **Puffer-Picker**: `<Leader>fb` öffnet eine Liste aller geladenen Puffer im Picker.
 - **Quickfix-Picker**: `<Leader>fq` lädt die aktuelle Quickfix-Liste in den Picker zur Bearbeitung/Filterung.
 - **Terminal-Toggle**: `<Leader>t` öffnet/schließt ein Terminal-Fenster am unteren Rand. Der Terminal-Puffer bleibt im Hintergrund erhalten.
