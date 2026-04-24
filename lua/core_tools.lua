@@ -90,6 +90,29 @@ function M.open_wiki_link()
     end
 end
 
+-- Findet alle Dateien, die auf die aktuelle Datei verlinken
+function M.wiki_backlinks()
+    local filename = vim.fn.expand("%:t:r")
+    if filename == "" then return end
+    
+    local pattern = "%[%[" .. filename .. "%]%]"
+    local cmd = "rg --vimgrep --smart-case " .. vim.fn.shellescape(pattern)
+    local results = vim.fn.systemlist(cmd)
+    
+    if #results == 0 then
+        print("Keine Backlinks gefunden für: " .. filename)
+        return
+    end
+
+    M.open_picker(results, "Backlinks: " .. filename, function(selected)
+        local parts = vim.split(selected, ":")
+        if #parts >= 3 then
+            vim.cmd("edit " .. parts[1])
+            vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
+        end
+    end)
+end
+
 -- --- 2. DATEI-SUCHE (Nutzt den Picker) ---
 function M.find_files()
   local files = vim.fn.systemlist("fd --type f --strip-cwd-prefix --hidden --exclude .git")
@@ -98,6 +121,27 @@ function M.find_files()
   M.open_picker(files, "Dateien finden", function(selected)
     vim.cmd("edit " .. selected)
   end)
+end
+
+function M.find_buffers()
+    local buffers = vim.api.nvim_list_bufs()
+    local items = {}
+    for _, bufnr in ipairs(buffers) do
+        if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].buflisted then
+            local name = vim.api.nvim_buf_get_name(bufnr)
+            local short_name = name ~= "" and vim.fn.fnamemodify(name, ":.") or "[No Name]"
+            table.insert(items, string.format("%d: %s", bufnr, short_name))
+        end
+    end
+
+    if #items == 0 then return end
+
+    M.open_picker(items, "Puffer auswählen", function(selected)
+        local bufnr = selected:match("^(%d+):")
+        if bufnr then
+            vim.cmd("buffer " .. bufnr)
+        end
+    end)
 end
 
 -- Projekt-Management via fd
@@ -274,7 +318,35 @@ function M.git_status()
     end)
 end
 
--- --- 6. HILFE & ÜBERSICHT ---
+-- --- 6. TERMINAL TOGGLE ---
+
+local term_buf = nil
+local term_win = nil
+
+function M.toggle_terminal()
+    if term_win and vim.api.nvim_win_is_valid(term_win) then
+        vim.api.nvim_win_hide(term_win)
+        term_win = nil
+    else
+        vim.cmd("botright split")
+        vim.cmd("resize 10")
+        term_win = vim.api.nvim_get_current_win()
+        
+        if term_buf and vim.api.nvim_buf_is_valid(term_buf) then
+            vim.api.nvim_win_set_buf(term_win, term_buf)
+        else
+            vim.cmd("term")
+            term_buf = vim.api.nvim_get_current_buf()
+            -- Terminal-spezifische Optionen
+            vim.wo[term_win].number = false
+            vim.wo[term_win].relativenumber = false
+            vim.wo[term_win].signcolumn = "no"
+        end
+        vim.cmd("startinsert")
+    end
+end
+
+-- --- 7. HILFE & ÜBERSICHT ---
 
 -- Zeigt alle Keymaps mit einer Beschreibung (desc) im Picker an
 function M.show_keymaps()

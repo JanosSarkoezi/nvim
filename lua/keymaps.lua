@@ -25,11 +25,14 @@ local core = require("core_tools")
 
 -- Core Tools
 map("n", "<Leader>wp", core.open_wiki_link, { desc = "Wiki Link öffnen" })
+map("n", "<Leader>wb", core.wiki_backlinks, { desc = "Wiki Backlinks suchen" })
 map("n", "<Leader>fp", core.find_projects, { desc = "Projekt suchen" })
 map("n", "<leader>ff", core.find_files, { desc = "Dateien suchen" })
+map("n", "<leader>fb", core.find_buffers, { desc = "Puffer suchen" })
 map("n", "<leader>fg", core.live_grep, { desc = "Live Grep" })
 map("n", "<leader>fd", core.find_directories, { desc = "Verzeichnisse suchen" })
 map("n", "<Leader>h", ":nohlsearch<CR>", { desc = "Such-Highlighting aufheben" })
+map("n", "<Leader>t", core.toggle_terminal, { desc = "Terminal Toggle" })
 
 -- Git Tools
 map("n", "<Leader>gl", core.git_log, { desc = "Git Log (Datei)" })

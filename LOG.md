@@ -1,6 +1,11 @@
 # LOG.md - Fortschritt & Änderungen
 
-## [2026-04-24] - Code-Bereinigung & Logik-Fixes
+## [2026-04-24] - Neue Features: Buffer-Picker, Terminal & Wiki-Backlinks
+
+### Hinzugefügt
+- **Puffer-Picker**: `<Leader>fb` öffnet eine Liste aller geladenen Puffer im Picker.
+- **Terminal-Toggle**: `<Leader>t` öffnet/schließt ein Terminal-Fenster am unteren Rand. Der Terminal-Puffer bleibt im Hintergrund erhalten.
+- **Wiki-Backlinks**: `<Leader>wb` sucht nach allen Dateien, die auf die aktuelle Notiz verweisen, und zeigt sie im Picker an.
 
 ### Behoben
 - **Wiki-Links**: Die Link-Erkennung in `core_tools.lua` priorisiert nun den Link direkt unter dem Cursor statt immer nur den ersten in der Zeile.
