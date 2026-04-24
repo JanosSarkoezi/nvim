@@ -75,7 +75,7 @@ map("n", "<Leader>cn", function() navigate_qf_stack("cnewer") end, { desc = "Neu
 -- Deine restlichen Binds (ohne expr = true, da nicht benötigt)
 map('n', '<RIGHT>', ':cope<CR>', { silent = true })
 map('n', '<LEFT>',  ':cclo<CR>', { silent = true })
-map('n', '<F1>', function () end, { silent = true, expr = true })
-map('i', '<F1>', function () end, { silent = true, expr = true })
+map('n', '<F1>', function () end, { silent = true })
+map('i', '<F1>', function () end, { silent = true })
 
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })

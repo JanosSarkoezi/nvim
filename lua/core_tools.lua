@@ -7,9 +7,9 @@ local M = {}
 function M.open_picker(items, title, callback)
     -- Neuen Scratch-Puffer erstellen
     local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_option(bufnr, "buftype", "nofile")
-    vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
-    vim.api.nvim_buf_set_option(bufnr, "swapfile", false)
+    vim.api.nvim_set_option_value("buftype", "nofile", { buf = bufnr })
+    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
+    vim.api.nvim_set_option_value("swapfile", false, { buf = bufnr })
     vim.api.nvim_buf_set_name(bufnr, title or "Picker")
 
     -- Einträge in den Puffer schreiben
@@ -57,9 +57,25 @@ end
 -- Wiki: [[link]] Unterstützung
 function M.open_wiki_link()
     local line = vim.api.nvim_get_current_line()
-    local col = vim.api.nvim_win_get_cursor(0)[2]
-    -- Suche nach [[link]]
-    local start_idx, end_idx, link = line:find("%[%[(.-)%]%]")
+    local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+    
+    local link = nil
+    local start_pos = 1
+    while true do
+        local s, e, l = line:find("%[%[(.-)%]%]", start_pos)
+        if not s then break end
+        if col >= s and col <= e then
+            link = l
+            break
+        end
+        start_pos = e + 1
+    end
+
+    -- Fallback: Erster Link in der Zeile, falls Cursor auf keinem steht
+    if not link then
+        _, _, link = line:find("%[%[(.-)%]%]")
+    end
+
     if link then
         local wiki_dir = vim.fn.expand("%:p:h")
         local file_path = wiki_dir .. "/" .. link .. ".md"
@@ -137,20 +153,20 @@ end
 -- Hilfsfunktion zur Anzeige von Git-Output in einem Scratch-Buffer
 function M.show_git_output(cmd, title, filetype)
     local output = vim.fn.systemlist(cmd)
-    if #output == 0 then
-        print("Keine Ausgabe für: " .. cmd)
+    if vim.v.shell_error ~= 0 or #output == 0 then
+        print("Fehler beim Ausführen von: " .. cmd)
         return
     end
 
     local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_option(bufnr, "buftype", "nofile")
-    vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
-    vim.api.nvim_buf_set_option(bufnr, "swapfile", false)
+    vim.api.nvim_set_option_value("buftype", "nofile", { buf = bufnr })
+    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
+    vim.api.nvim_set_option_value("swapfile", false, { buf = bufnr })
     vim.api.nvim_buf_set_name(bufnr, title or "Git Output")
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
     
     if filetype then
-        vim.api.nvim_buf_set_option(bufnr, "filetype", filetype)
+        vim.api.nvim_set_option_value("filetype", filetype, { buf = bufnr })
     end
 
     vim.cmd("vertical botright split")
@@ -169,7 +185,8 @@ function M.git_log(opts)
     local is_project = (file == "")
     
     -- Nur innerhalb eines Git-Repos zulassen
-    if vim.fn.system("git rev-parse --is-inside-work-tree"):match("false") then
+    vim.fn.system("git rev-parse --is-inside-work-tree")
+    if vim.v.shell_error ~= 0 then
         print("Nicht in einem Git-Repository.")
         return
     end
@@ -261,20 +278,26 @@ end
 
 -- Zeigt alle Keymaps mit einer Beschreibung (desc) im Picker an
 function M.show_keymaps()
-    local maps = vim.api.nvim_get_keymap("n")
+    local global_maps = vim.api.nvim_get_keymap("n")
+    local buffer_maps = vim.api.nvim_buf_get_keymap(0, "n")
     local lines = {}
-    
-    for _, map in ipairs(maps) do
-        if map.desc then
-            -- Formatiere: "LHS | Beschreibung"
-            -- Wir ersetzen das Leerzeichen (Leader) durch <Leader> für bessere Lesbarkeit
-            local lhs = map.lhs:gsub(" ", "<Leader>")
-            table.insert(lines, string.format("%-12s │ %s", lhs, map.desc))
+
+    local function process_maps(maps)
+        for _, map in ipairs(maps) do
+            if map.desc then
+                -- Formatiere: "LHS | Beschreibung"
+                -- Wir ersetzen das Leerzeichen (Leader) durch <Leader> für bessere Lesbarkeit
+                local lhs = map.lhs:gsub(" ", "<Leader>")
+                table.insert(lines, string.format("%-12s │ %s", lhs, map.desc))
+            end
         end
     end
-    
+
+    process_maps(global_maps)
+    process_maps(buffer_maps)
+
     table.sort(lines)
-    
+
     if #lines == 0 then
         print("Keine Keymaps mit Beschreibung gefunden.")
         return
@@ -282,8 +305,8 @@ function M.show_keymaps()
 
     M.open_picker(lines, "Keymap-Übersicht", function(selected)
         -- Optional: Bei <CR> könnte man die Keymap erklären oder ausführen
-        -- Fürs Erste reicht die Übersicht
     end)
 end
+
 
 return M

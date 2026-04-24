@@ -75,7 +75,6 @@ vim.opt.tabstop = 4
 
 -- Folding
 vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
 vim.opt.foldlevel = 99
@@ -93,33 +92,21 @@ vim.opt.wrapscan = false
 
 vim.api.nvim_set_hl(0, "MyColor", {fg="#00FF00"})
 
-local function statusline()
-    local set_color_1 = "%#MyColor#"
-    local file_name = " %f"
-    local set_color_2 = "%#StatusMsg#"
-    local modified = "%m"
-    local align_right = "%="
-    local fileencoding = " %{&fileencoding?&fileencoding:&encoding}"
-    local fileformat = " [%{&fileformat}]"
-    local filetype = " %y"
-    local percentage = " %p%%"
-    local linecol = " %l:%c"
-
-    return string.format(
-        "%s%s %s%s%s%s%s%s%s%s%s",
-        set_color_2,
-        file_name,
-        set_color_1,
-        modified,
-        set_color_2,
-        align_right,
-        filetype,
-        fileencoding,
-        fileformat,
-        percentage,
-        linecol
-    )
+_G.statusline = function()
+    return table.concat({
+        "%#StatusMsg#",
+        " %f ",
+        "%#MyColor#",
+        "%m",
+        "%#StatusMsg#",
+        "%=",
+        " %y ",
+        " %{&fileencoding?&fileencoding:&encoding} ",
+        "[%{&fileformat}] ",
+        "%p%% ",
+        "%l:%c "
+    })
 end
 
-vim.opt.statusline = statusline()
+vim.opt.statusline = "%!v:lua.statusline()"
 -- vim: ts=2 sts=2 sw=2 et

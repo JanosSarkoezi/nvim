@@ -1,6 +1,17 @@
 # LOG.md - Fortschritt & Änderungen
 
-## [2026-04-21] - Git Log Erweiterung
+## [2026-04-24] - Code-Bereinigung & Logik-Fixes
+
+### Behoben
+- **Wiki-Links**: Die Link-Erkennung in `core_tools.lua` priorisiert nun den Link direkt unter dem Cursor statt immer nur den ersten in der Zeile.
+- **Statusline**: In `options.lua` auf dynamische Evaluierung (`%!v:lua.statusline()`) umgestellt.
+- **Faltung**: Redundante `foldexpr` Zuweisung in `options.lua` entfernt.
+- **Keymaps**: `expr = true` bei dummy F1-Mappings entfernt, um Ausführungsfehler zu vermeiden.
+- **Keymap-Übersicht**: Zeigt nun sowohl globale als auch Puffer-lokale Mappings an.
+
+### Geändert
+- **API-Modernisierung**: `nvim_buf_set_option` durch `nvim_set_option_value` in `core_tools.lua` ersetzt.
+- **Git-Robustheit**: Prüfung auf Git-Repository nutzt nun `vim.v.shell_error` für zuverlässigere Fehlererkennung.
 
 ### Hinzugefügt
 - **Git Log (Projekt)**: `<Leader>ga` zeigt das gesamte Projekt-Log im Picker an. Auswahl öffnet den kompletten Commit-Diff.
