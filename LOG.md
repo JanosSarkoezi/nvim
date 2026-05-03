@@ -1,4 +1,9 @@
 # LOG.md - Fortschritt & Änderungen
+## [2026-05-03] - Bugfix: E95 Buffer already exists (Singleton Pattern)
+- **Fokus statt Duplikat**: Wenn ein Picker oder Git-Output-Fenster bereits offen ist, wird kein neuer Puffer erstellt. Stattdessen springt der Fokus direkt in das bereits vorhandene Fenster.
+- **Sauberer Neuaufbau**: Falls ein Puffer mit dem Namen zwar existiert, aber nicht sichtbar ist (z.B. versteckt), wird er automatisch gelöscht, damit die neue Instanz den Namen übernehmen kann.
+- **UX**: Verhindert redundante Picker-Fenster und spart Ressourcen.
+
 ## [2026-05-03] - Modularisierung von core_tools.lua (Divide & Conquer)
 - **Struktur-Refactoring**: `lua/core_tools.lua` (598 Zeilen) wurde in ein modulares System unter `lua/core/` aufgeteilt, um die Wartbarkeit zu verbessern.
 - **Neue Module**:

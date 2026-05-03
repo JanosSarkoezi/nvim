@@ -3,12 +3,27 @@ local M = {}
 
 -- Zentrale Funktion für Puffer-basierte Auswahl (M.open_picker)
 function M.open_picker(items, title, callback, extra_mappings)
+    local base_name = title or "Picker"
+    
+    -- Prüfen, ob bereits ein Puffer mit diesem Namen existiert
+    local existing_bufnr = vim.fn.bufnr(base_name)
+    if existing_bufnr ~= -1 and vim.api.nvim_buf_is_valid(existing_bufnr) then
+        local wins = vim.fn.win_findbuf(existing_bufnr)
+        if #wins > 0 then
+            -- Bereits in einem Fenster offen -> Fokus setzen und nichts tun
+            vim.api.nvim_set_current_win(wins[1])
+            return
+        end
+        -- Puffer existiert, ist aber nicht sichtbar -> Löschen für sauberen Neuaufbau
+        vim.api.nvim_buf_delete(existing_bufnr, { force = true })
+    end
+
     -- Neuen Scratch-Puffer erstellen
     local bufnr = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_option_value("buftype", "nofile", { buf = bufnr })
     vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
     vim.api.nvim_set_option_value("swapfile", false, { buf = bufnr })
-    vim.api.nvim_buf_set_name(bufnr, title or "Picker")
+    vim.api.nvim_buf_set_name(bufnr, base_name)
     -- Einträge in den Puffer schreiben
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, items)
     -- Puffer anzeigen (unten, mit reduzierter Höhe)

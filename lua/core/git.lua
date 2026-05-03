@@ -4,6 +4,19 @@ local picker = require("core.picker")
 
 -- Hilfsfunktion zur Anzeige von Git-Output in einem Scratch-Buffer
 function M.show_git_output(cmd, title, filetype)
+    local base_name = title or "Git Output"
+    
+    -- Prüfen auf Duplikate
+    local existing_bufnr = vim.fn.bufnr(base_name)
+    if existing_bufnr ~= -1 and vim.api.nvim_buf_is_valid(existing_bufnr) then
+        local wins = vim.fn.win_findbuf(existing_bufnr)
+        if #wins > 0 then
+            vim.api.nvim_set_current_win(wins[1])
+            return
+        end
+        vim.api.nvim_buf_delete(existing_bufnr, { force = true })
+    end
+
     local output = vim.fn.systemlist(cmd)
     if vim.v.shell_error ~= 0 or #output == 0 then
         print("Fehler beim Ausführen von: " .. cmd)
@@ -13,7 +26,7 @@ function M.show_git_output(cmd, title, filetype)
     vim.api.nvim_set_option_value("buftype", "nofile", { buf = bufnr })
     vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
     vim.api.nvim_set_option_value("swapfile", false, { buf = bufnr })
-    vim.api.nvim_buf_set_name(bufnr, title or "Git Output")
+    vim.api.nvim_buf_set_name(bufnr, base_name)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
     if filetype then
         vim.api.nvim_set_option_value("filetype", filetype, { buf = bufnr })
