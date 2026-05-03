@@ -34,6 +34,9 @@ function M.show_git_output(cmd, title, filetype)
     vim.cmd("vertical botright split")
     local winnr = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(winnr, bufnr)
+
+    -- Fenster auf diesen Puffer fixieren
+    vim.wo[winnr].winfixbuf = true
     local opts = { buffer = bufnr, silent = true }
     vim.keymap.set("n", "q", function() vim.api.nvim_win_close(winnr, true) end, opts)
     vim.keymap.set("n", "<Esc>", function() vim.api.nvim_win_close(winnr, true) end, opts)

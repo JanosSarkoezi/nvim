@@ -63,6 +63,10 @@ vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
 vim.opt.foldlevel = 99
 -- Am ende der Suche nicht neu oben anfangen
 vim.opt.wrapscan = false
+-- Setzt das Suchprogramm auf ripgrep
+vim.opt.grepprg = "rg --vimgrep --smart-case"
+-- Definiert das Format, wie Neovim die Ausgabe einliest
+vim.opt.grepformat = "%f:%l:%c:%m"
 -- Grep with external Programms
 -- if vim.fn.executable('rg') > 0 then
 --   vim.o.grepprg =

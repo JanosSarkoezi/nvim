@@ -1,4 +1,9 @@
 # LOG.md - Fortschritt & Änderungen
+## [2026-05-03] - Standfeste UI (winfixbuf Integration)
+- **Fenster-Locking**: Integration von `winfixbuf=true` für alle Picker- und Git-Output-Fenster. 
+- **Sicherheit**: Verhindert, dass in diesen spezialisierten Fenstern versehentlich andere Puffer (z.B. via `:edit` oder `:bnext`) geöffnet werden. Das Fenster bleibt strikt dem Tool vorbehalten.
+- **Voraussetzung**: Nutzt native Features von Neovim 0.10+.
+
 ## [2026-05-03] - Bugfix: E95 Buffer already exists (Singleton Pattern)
 - **Fokus statt Duplikat**: Wenn ein Picker oder Git-Output-Fenster bereits offen ist, wird kein neuer Puffer erstellt. Stattdessen springt der Fokus direkt in das bereits vorhandene Fenster.
 - **Sauberer Neuaufbau**: Falls ein Puffer mit dem Namen zwar existiert, aber nicht sichtbar ist (z.B. versteckt), wird er automatisch gelöscht, damit die neue Instanz den Namen übernehmen kann.

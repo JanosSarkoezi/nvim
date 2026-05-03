@@ -30,6 +30,9 @@ function M.open_picker(items, title, callback, extra_mappings)
     vim.cmd("botright 12split")
     local winnr = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(winnr, bufnr)
+    
+    -- Fenster auf diesen Puffer fixieren (verhindert :edit etc. in diesem Fenster)
+    vim.wo[winnr].winfixbuf = true
     -- Lokale Keymaps setzen
     local opts = { buffer = bufnr, silent = true }
     -- <CR> wählt den Eintrag aus

@@ -4,80 +4,80 @@ Eine modulare, minimalistische Neovim-Konfiguration mit einem Fokus auf **Buffer
 
 Dieses Setup verzichtet bewusst auf schwere UI-Plugins und nutzt stattdessen die integrierten Funktionen von Neovim kombiniert mit mächtigen Shell-Tools wie `fd` und `rg`.
 
-## 🚀 Philosophie
+## Philosophie
 
-- **Modularer Minimalismus**: Die Logik ist sauber in Module unter `lua/` getrennt. Kein unnötiger Ballast.
-- **Buffer-First UI**: Anstatt starrer Pop-up-Menüs nutzt diese Konfiguration temporäre "Scratch-Buffer" für Suchen, Listen und Auswahlen. Dies ermöglicht:
+- **Modularer Minimalismus**: Die Logik ist sauber in spezialisierte Module getrennt. Kein unnötiger Ballast.
+- **Buffer-First UI**: Anstatt starrer Pop-up-Menüs nutzt diese Konfiguration temporäre "Scratch-Buffer" für Suchen, Listen und Auswahlen.
     - Navigation mit Standard-Vim-Befehlen (`/`, `?`, `G`, `gg`).
-    - Filtern und Bearbeiten der Ergebnislisten (z.B. mit `dd` zum Entfernen).
-    - Konsistenz über alle Tools hinweg.
-- **Native Power**: Volle Nutzung des integrierten Package-Systems (`vim.pack`), der Quickfix-Liste und Treesitter.
-- **Shell-Integration**: Bevorzugung von bewährten Tools (`fd`, `rg`, `git`) gegenüber komplexen Plugin-Abhängigkeiten.
+    - Fenster-Schutz via `winfixbuf` gegen versehentliches Überschreiben.
+    - Singleton-Prinzip: Verhindert redundante Fenster-Instanzen.
+- **Native Power**: Volle Nutzung des integrierten Package-Systems, der Quickfix-Liste und moderner API-Features.
 
-## ✨ Features
+## Wichtige Keymaps
 
-### 🔍 Zentraler Picker
-Das Herzstück der Konfiguration. Ein universelles Auswahl-Tool für:
-- **Dateien (`<Leader>ff`)**: Schnelle Suche mit `fd`.
-- **Puffer (`<Leader>fb`)**: Übersicht und Wechsel zwischen geladenen Buffern.
-- **Projekte (`<Leader>fp`)**: Schneller Wechsel zwischen Git-Projekten.
-- **Live Grep (`<Leader>fg`)**: Projektweite Textsuche mit `rg`.
-- **Verzeichnisse (`<Leader>fd`)**: Schneller Wechsel des Arbeitsverzeichnisses.
-- **Quickfix-Integration**: `<C-q>` im Picker schiebt alle aktuellen Treffer in die Quickfix-Liste.
+### Suche & Navigation
+| Keymap | Aktion | Tool |
+| :--- | :--- | :--- |
+| `<Leader>ff` | Dateien suchen | `fd` |
+| `<Leader>fb` | Puffer auswählen | Native |
+| `<Leader>fg` | Live Grep | `rg` |
+| `<Leader>fd` | Verzeichnis wechseln | `fd` |
+| `<Leader>fp` | Projekt wechseln | `fd` |
+| `<Leader>fq` | Quickfix bearbeiten | Picker |
 
-### 📝 Wiki & Wissensmanagement
-- **Wiki-Links**: Unterstützung für `[[link]]` mit automatischer Verzeichniserstellung (`<Leader>wp`).
-- **Backlinks (`<Leader>wb`)**: Findet alle Dokumente, die auf die aktuelle Notiz verweisen.
+### Git Tools
+| Keymap | Aktion | Beschreibung |
+| :--- | :--- | :--- |
+| `<Leader>gs` | Git Status | s=Stage, u=Unstage, CR=Diff |
+| `<Leader>gl` | Git Log (Datei) | Historie der aktuellen Datei |
+| `<Leader>ga` | Git Log (Projekt) | Gesamtes Projekt-Log |
+| `<Leader>gL` | Git Log (Range) | Historie für markierten Bereich |
+| `<Leader>gb` | Git Blame | Info zur aktuellen Zeile |
+| `<Leader>gc` | Git Checkout | Branch-Switcher |
+| `<Leader>gh` | Git Stash | Liste; CR=Apply, d=Drop |
 
-### 🌿 Git Integration (Buffer-First)
-- **Status (`<Leader>gs`)**: Interaktive Liste; `s` zum Stagen, `u` zum Unstagen, `<CR>` für Diff.
-- **Log (`<Leader>gl` / `<Leader>ga`)**: Datei- oder Projekthistorie einsehen.
-- **Range Log (`<Leader>gL`)**: Historie für markierte Zeilen oder Blöcke (`git log -L`).
-- **Blame (`<Leader>gb`)**: Schnelle Info zur aktuellen Zeile.
-- **Branches (`<Leader>gc`)**: Branch-Switcher.
-- **Stash (`<Leader>gh`)**: Stash-Verwaltung (Apply/Drop).
+### Mark Manager
+| Keymap | Aktion | Register |
+| :--- | :--- | :--- |
+| `<Leader>ml` | Mark setzen (Auto) | Lokal (`a-e`) |
+| `<Leader>mg` | Mark setzen (Auto) | Global (`A-E`) |
+| `<Leader>mm` | Mark Manager | p=Pin, dd=Delete, CR=Jump |
 
-### 📍 Mark Manager
-- **Automatisierte Rotation**: `<Leader>m` (lokal) und `<Leader>n` (global) setzen Marks automatisch in freien oder den ältesten unbenutzten Registern (`a-e` / `A-E`).
-- **Verwaltung (`<Leader>mm`)**: Ein UI zum Springen, Löschen (`dd`) oder Pinnen (`p`) von Marks. Gepinnte Marks werden nicht automatisch überschrieben.
+### Wiki & System
+| Keymap | Aktion | Beschreibung |
+| :--- | :--- | :--- |
+| `<Leader>wp` | Wiki Link öffnen | Folgt `[[link]]` |
+| `<Leader>wb` | Wiki Backlinks | Sucht Verweise auf aktuelle Datei |
+| `<Leader>t` | Terminal Toggle | Terminal am unteren Rand |
+| `<Leader>?` | Hilfe | Keymap-Übersicht anzeigen |
 
-### 🛠️ Weitere Highlights
-- **Terminal-Toggle (`<Leader>t`)**: Ein schnelles Terminal am unteren Rand.
-- **Quickfix-Navigation**: Einfaches Springen mit `<UP>`/`<DOWN>` und Stack-Navigation mit `<Leader>co`/`<Leader>cn`.
-- **Treesitter**: Modernes Syntax-Highlighting und intelligentes Folding.
-- **Design**: `tokyonight` Colorscheme mit einer minimalistischen, informativen Statusline.
+## Struktur
 
-## 📂 Struktur
+Das Projekt ist modular aufgebaut, um Wartbarkeit und Übersichtlichkeit zu gewährleisten:
 
 ```text
 ~/.config/nvim/
-├── init.lua           -- Haupteinstiegspunkt & Plugins
-├── GEMINI.md          -- Architektur-Kontext für LLMs
-├── LOG.md             -- Chronologisches Änderungsprotokoll
-└── lua/
-    ├── options.lua    -- Native Vim-Einstellungen
-    ├── keymaps.lua    -- Zentrale Keybindings
-    └── core_tools.lua -- Picker-Logik, Wiki, Git & Mark Manager
+├── init.lua           -- Einstiegspunkt & Plugin-Management
+├── lua/
+│   ├── options.lua    -- Native Einstellungen (vim.opt)
+│   ├── keymaps.lua    -- Zentrale Keybindings
+│   ├── core_tools.lua -- Fassade für alle Tools
+│   └── core/          -- Spezialisierte Module
+│       ├── picker.lua -- Herzstück: Buffer-UI
+│       ├── search.lua -- Suche & Navigation
+│       ├── git.lua    -- Git-Integration
+│       ├── marks.lua  -- Mark-Management
+│       ├── wiki.lua   -- Wissensmanagement
+│       └── misc.lua   -- Hilfe & Terminal
+└── LOG.md             -- Chronologisches Änderungsprotokoll
 ```
 
-## 🛠️ Anforderungen
+## Anforderungen
 
-- **Neovim 0.10+** (empfohlen)
+- **Neovim 0.10+**
 - **fd**: Für Dateisuche.
 - **ripgrep (rg)**: Für Textsuche.
-- **git**: Für die Versionsverwaltungstools.
-
-## ⌨️ Wichtige Keymaps
-
-| Keymap | Beschreibung |
-| :--- | :--- |
-| `<Leader>ff` | Dateien suchen |
-| `<Leader>fg` | Live Grep |
-| `<Leader>gs` | Git Status |
-| `<Leader>mm` | Mark Manager |
-| `<Leader>t` | Terminal ein/aus |
-| `<Leader>?` | Alle verfügbaren Keymaps anzeigen |
+- **git**: Für Versionsverwaltung.
 
 ---
-
 *Für eine detaillierte Historie der Änderungen siehe [LOG.md](./LOG.md).*
