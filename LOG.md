@@ -1,4 +1,15 @@
 # LOG.md - Fortschritt & Änderungen
+## [2026-05-03] - Modularisierung von core_tools.lua (Divide & Conquer)
+- **Struktur-Refactoring**: `lua/core_tools.lua` (598 Zeilen) wurde in ein modulares System unter `lua/core/` aufgeteilt, um die Wartbarkeit zu verbessern.
+- **Neue Module**:
+    - `lua/core/picker.lua`: Zentrale Picker-Logik (`open_picker`).
+    - `lua/core/wiki.lua`: Wiki-Links und Backlinks.
+    - `lua/core/search.lua`: Dateisuche, Grep, Projekte, Verzeichnisse und Quickfix-Integration.
+    - `lua/core/git.lua`: Git-Status, Logs, Blame, Branches und Stashes.
+    - `lua/core/marks.lua`: Mark-Manager mit automatischer Rotation und Pinning.
+    - `lua/core/misc.lua`: Terminal-Toggle und Keymap-Übersicht.
+- **Abwärtskompatibilität**: `lua/core_tools.lua` fungiert nun als Fassade (Proxy), die alle Funktionen aus den Modulen exportiert. Bestehende Keymaps in `lua/keymaps.lua` funktionieren weiterhin ohne Anpassung.
+
 ## [2026-05-03] - Dokumentation & README
 ### Hinzugefügt
 - **README.md**: Erstellung einer umfassenden Dokumentation, die die Philosophie (Buffer-First), die Features (Picker, Git, Wiki, Mark Manager) und die Projektstruktur erklärt.
