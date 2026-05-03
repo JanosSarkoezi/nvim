@@ -4,6 +4,12 @@
 - **README.md**: Erstellung einer umfassenden Dokumentation, die die Philosophie (Buffer-First), die Features (Picker, Git, Wiki, Mark Manager) und die Projektstruktur erklärt.
 - **Projekt-Übersicht**: Zusammenfassung der wichtigsten Keymaps und Anforderungen für neue Nutzer.
 
+## [2026-05-03] - Mark Manager Refactoring (Buffer-lokale Isolation)
+- **Buffer-lokale Rotation**: Die automatische Vergabe von lokalen Marks (`a-e`) via `<Leader>m` ist nun isoliert pro Datei. Jede Datei hat ihre eigene Rotations-Historie.
+- **Isoliertes Pinning**: Das Pinnen von Marks (`p` im Mark Manager) für `a-e` gilt nun ebenfalls nur für die jeweilige Datei.
+- **Globale Marks**: Marks `A-E` rotieren weiterhin global über alle Dateien hinweg.
+- **Technische Umsetzung**: Nutzung von `vim.b` (buffer-local variables) zur Speicherung des Mark-Status, um die globale "Verschmutzung" der Mark-Rotation zu verhindern.
+
 ## [2026-05-02] - Automatisierter Mark Manager (Buffer-First)
 ### Hinzugefügt
 - **Automatisierte Mark-Rotation**: `<Leader>m` (lokal) und `<Leader>n` (global) setzen nun automatisch Marks in einem rotierenden System (`a-e` bzw. `A-E`). Es wird immer das älteste, unbenutzte Register gewählt.
