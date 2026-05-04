@@ -1,4 +1,12 @@
 # LOG.md - Fortschritt & Änderungen
+
+## [2026-05-05] - Speicherort für Projekte verschoben & Grep-Flags
+- **Refactoring**: Der Speicherort für die Datei `projects` wurde von `stdpath("config")` nach `stdpath("data")` verschoben (`~/.local/share/nvim/projects`).
+- **Feature**: `<Leader>fg` (Grep) und `<Leader>fG` (MultiGrep) unterstützen nun Flags (z.B. `-t lua`). Sie funktionieren jetzt wie der native `:grep` Befehl:
+    - Wenn man `<Leader>fg` drückt, öffnet sich die Befehlszeile mit `:Grep `.
+    - Man kann dort das Suchmuster und Flags eingeben (z.B. `:Grep "mein suchbegriff" -t py`).
+    - Ohne Argumente (`:Grep` + Enter) erscheint weiterhin der gewohnte Prompt.
+
 ## [2026-05-04] - Project Context & Multi-Grep
 - **Feature**: Einführung von "Gepinnten Projekten". Erlaubt es, eine feste Liste von Projektverzeichnissen zu definieren.
 - **Multi-Search**: Neues Kommando `<Leader>fG` (Multi-Grep), das gleichzeitig in allen gepinnten Projekten sucht. Ideal für Microservices oder zusammengehörige Repos.

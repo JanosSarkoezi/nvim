@@ -2,7 +2,7 @@
 local M = {}
 local picker = require("core.picker")
 
-local projects_file = vim.fn.stdpath("config") .. "/projects"
+local projects_file = vim.fn.stdpath("data") .. "/projects"
 
 -- Lädt die Liste der gepinnten Projekte
 local function load_projects()
@@ -52,21 +52,25 @@ function M.pinned_projects()
 end
 
 -- Grep über ALLE gepinnten Projekte gleichzeitig
-function M.multi_grep()
+function M.multi_grep(args)
     local projects = load_projects()
     if #projects == 0 then
         print("Keine gepinnten Projekte für Multi-Grep.")
         return
     end
-    local pattern = vim.fn.input("Multi-Grep > ")
-    if pattern == "" then return end
+
+    local query = args
+    if not query or query == "" then
+        query = vim.fn.input("Multi-Grep > ")
+    end
+    if query == "" then return end
     
     local paths = ""
     for _, p in ipairs(projects) do
         paths = paths .. " " .. vim.fn.shellescape(p)
     end
     
-    local cmd = "rg --vimgrep --smart-case --hidden " .. vim.fn.shellescape(pattern) .. paths
+    local cmd = "rg --vimgrep --smart-case --hidden " .. query .. paths
     local results = vim.fn.systemlist(cmd)
     
     if #results == 0 then
@@ -74,7 +78,7 @@ function M.multi_grep()
         return
     end
     
-    picker.open_picker(results, "Multi-Grep: " .. pattern, function(selected)
+    picker.open_picker(results, "Multi-Grep: " .. query, function(selected)
         local parts = vim.split(selected, ":")
         if #parts >= 3 then
             vim.cmd("edit " .. parts[1])
@@ -122,16 +126,20 @@ function M.find_projects()
     end)
 end
 
-function M.live_grep()
-    local pattern = vim.fn.input("Grep > ")
-    if pattern == "" then return end
-    local cmd = "rg --vimgrep --smart-case --hidden --glob '!.git/*' " .. vim.fn.shellescape(pattern)
+function M.live_grep(args)
+    local query = args
+    if not query or query == "" then
+        query = vim.fn.input("Grep > ")
+    end
+    if query == "" then return end
+
+    local cmd = "rg --vimgrep --smart-case --hidden --glob '!.git/*' " .. query
     local results = vim.fn.systemlist(cmd)
     if #results == 0 then
         print("Keine Treffer gefunden.")
         return
     end
-    picker.open_picker(results, "Grep: " .. pattern, function(selected)
+    picker.open_picker(results, "Grep: " .. query, function(selected)
         local parts = vim.split(selected, ":")
         if #parts >= 3 then
             vim.cmd("edit " .. parts[1])
@@ -139,6 +147,15 @@ function M.live_grep()
         end
     end)
 end
+
+-- Commands registrieren
+vim.api.nvim_create_user_command("Grep", function(opts)
+    M.live_grep(opts.args)
+end, { nargs = "*" })
+
+vim.api.nvim_create_user_command("MultiGrep", function(opts)
+    M.multi_grep(opts.args)
+end, { nargs = "*" })
 
 function M.find_directories()
     local dirs = vim.fn.systemlist("fd --type d --strip-cwd-prefix --hidden --exclude .git")
