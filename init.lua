@@ -4,6 +4,9 @@
 require("options")
 require("keymaps")
 require("core_tools")
+
+-- Native Git Gutter initialisieren
+require("core.git").setup_gutter()
 vim.api.nvim_create_autocmd('PackChanged', { callback = function(ev)
   local name, kind = ev.data.spec.name, ev.data.kind
   if name == 'nvim-treesitter' and kind == 'update' then

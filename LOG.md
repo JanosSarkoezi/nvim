@@ -1,4 +1,15 @@
 # LOG.md - Fortschritt & Änderungen
+## [2026-05-04] - Native Git Gutter-Signs
+- **Feature**: Implementierung einer leichtgewichtigen Gutter-Anzeige für Git-Änderungen (`+`, `~`, `_`).
+- **Technik**: Nutzt `git diff -U0` zur Analyse von Änderungen und die native Neovim `sign` API zur Anzeige.
+- **Automatisierung**: Automatische Aktualisierung bei `BufReadPost`, `BufWritePost` und `FocusGained`.
+- **Minimalismus**: Keine Abhängigkeit von Plugins wie `gitsigns.nvim`; volle Kontrolle über Highlights und Symbole.
+
+## [2026-05-04] - Ideen-Roadmap & Zukunftsplanung
+- **Strategische Planung**: Erstellung von `Ideen.md` zur strukturierten Erfassung von Erweiterungsmöglichkeiten für die Konfiguration.
+- **Themenschwerpunkte**: Fokus auf LSP-Integration (Outline/Diagnostics), Wiki-Ausbau (Daily Notes/Completion), Workflow-Utilities (Snippets/Sessions) und native UI-Refinements (Statusline).
+- **Philosophie**: Sicherstellung, dass alle zukünftigen Features dem "Modularer Minimalismus" und dem "Buffer-First" Prinzip folgen.
+
 ## [2026-05-03] - Standfeste UI (winfixbuf Integration)
 - **Fenster-Locking**: Integration von `winfixbuf=true` für alle Picker- und Git-Output-Fenster. 
 - **Sicherheit**: Verhindert, dass in diesen spezialisierten Fenstern versehentlich andere Puffer (z.B. via `:edit` oder `:bnext`) geöffnet werden. Das Fenster bleibt strikt dem Tool vorbehalten.

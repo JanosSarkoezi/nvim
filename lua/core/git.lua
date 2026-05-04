@@ -2,6 +2,64 @@
 local M = {}
 local picker = require("core.picker")
 
+-- Native Gutter-Signs Initialisierung
+function M.setup_gutter()
+    vim.fn.sign_define("GitAdd", { text = "+", texthl = "GitSignsAdd" })
+    vim.fn.sign_define("GitChange", { text = "│", texthl = "GitSignsChange" })
+    vim.fn.sign_define("GitDelete", { text = "_", texthl = "GitSignsDelete" })
+    
+    -- Standard-Highlights falls nicht vom Theme gesetzt
+    vim.cmd([[
+        highlight default GitSignsAdd guifg=#b8bb26
+        highlight default GitSignsChange guifg=#fabd2f
+        highlight default GitSignsDelete guifg=#fb4934
+    ]])
+
+    local group = vim.api.nvim_create_augroup("GitGutter", { clear = true })
+    vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "FocusGained" }, {
+        group = group,
+        callback = function() M.update_gutter_signs() end,
+    })
+end
+
+-- Aktualisiert die Signs in der Gutter basierend auf git diff
+function M.update_gutter_signs()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local file = vim.api.nvim_buf_get_name(bufnr)
+    if file == "" or vim.bo[bufnr].buftype ~= "" then return end
+
+    -- Prüfen ob im Git-Repo
+    vim.fn.system("git rev-parse --is-inside-work-tree")
+    if vim.v.shell_error ~= 0 then return end
+
+    -- Bestehende Signs löschen
+    vim.fn.sign_unplace("GitGutter", { buffer = bufnr })
+
+    local cmd = "git diff -U0 --no-color -- " .. vim.fn.shellescape(file)
+    local diff = vim.fn.systemlist(cmd)
+    
+    for _, line in ipairs(diff) do
+        local old_start, old_count, new_start, new_count = line:match("^@@ %-(%d+),?(%d*) %+(%d+),?(%d*) @@")
+        if old_start then
+            old_start = tonumber(old_start)
+            old_count = tonumber(old_count == "" and 1 or old_count)
+            new_start = tonumber(new_start)
+            new_count = tonumber(new_count == "" and 1 or new_count)
+            
+            if new_count > 0 then
+                local name = old_count > 0 and "GitChange" or "GitAdd"
+                for i = 0, new_count - 1 do
+                    vim.fn.sign_place(0, "GitGutter", name, bufnr, { lnum = new_start + i, priority = 10 })
+                end
+            elseif old_count > 0 then
+                -- Deletion: Sign an die Position setzen, wo gelöscht wurde
+                local lnum = math.max(1, new_start)
+                vim.fn.sign_place(0, "GitGutter", "GitDelete", bufnr, { lnum = lnum, priority = 10 })
+            end
+        end
+    end
+end
+
 -- Hilfsfunktion zur Anzeige von Git-Output in einem Scratch-Buffer
 function M.show_git_output(cmd, title, filetype)
     local base_name = title or "Git Output"
