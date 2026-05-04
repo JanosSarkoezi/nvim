@@ -2,6 +2,87 @@
 local M = {}
 local picker = require("core.picker")
 
+local projects_file = vim.fn.stdpath("config") .. "/projects"
+
+-- Lädt die Liste der gepinnten Projekte
+local function load_projects()
+    if vim.fn.filereadable(projects_file) == 0 then return {} end
+    return vim.fn.readfile(projects_file)
+end
+
+-- Fügt das aktuelle Verzeichnis zu den gepinnten Projekten hinzu
+function M.add_project()
+    local cwd = vim.fn.getcwd()
+    local projects = load_projects()
+    for _, p in ipairs(projects) do
+        if p == cwd then
+            print("Projekt bereits gepinnt: " .. cwd)
+            return
+        end
+    end
+    table.insert(projects, cwd)
+    vim.fn.writefile(projects, projects_file)
+    print("Projekt gepinnt: " .. cwd)
+end
+
+-- Picker für gepinnte Projekte
+function M.pinned_projects()
+    local projects = load_projects()
+    if #projects == 0 then
+        print("Keine gepinnten Projekte gefunden. Nutze :lua require('core.search').add_project()")
+        return
+    end
+    picker.open_picker(projects, "Gepinnte Projekte (dd=Entfernen)", function(choice)
+        if choice then
+            vim.cmd("cd " .. choice)
+            print("CWD gewechselt zu: " .. choice)
+        end
+    end, {
+        dd = function(selected, bufnr)
+            local projects = load_projects()
+            local new_projects = {}
+            for _, p in ipairs(projects) do
+                if p ~= selected then table.insert(new_projects, p) end
+            end
+            vim.fn.writefile(new_projects, projects_file)
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_projects)
+            print("Projekt entfernt: " .. selected)
+        end
+    })
+end
+
+-- Grep über ALLE gepinnten Projekte gleichzeitig
+function M.multi_grep()
+    local projects = load_projects()
+    if #projects == 0 then
+        print("Keine gepinnten Projekte für Multi-Grep.")
+        return
+    end
+    local pattern = vim.fn.input("Multi-Grep > ")
+    if pattern == "" then return end
+    
+    local paths = ""
+    for _, p in ipairs(projects) do
+        paths = paths .. " " .. vim.fn.shellescape(p)
+    end
+    
+    local cmd = "rg --vimgrep --smart-case --hidden " .. vim.fn.shellescape(pattern) .. paths
+    local results = vim.fn.systemlist(cmd)
+    
+    if #results == 0 then
+        print("Keine Treffer in gepinnten Projekten.")
+        return
+    end
+    
+    picker.open_picker(results, "Multi-Grep: " .. pattern, function(selected)
+        local parts = vim.split(selected, ":")
+        if #parts >= 3 then
+            vim.cmd("edit " .. parts[1])
+            vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
+        end
+    end)
+end
+
 function M.find_files()
   local files = vim.fn.systemlist("fd --type f --strip-cwd-prefix --hidden --exclude .git")
   if #files == 0 then return end

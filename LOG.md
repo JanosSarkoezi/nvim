@@ -1,4 +1,12 @@
 # LOG.md - Fortschritt & Änderungen
+## [2026-05-04] - Project Context & Multi-Grep
+- **Feature**: Einführung von "Gepinnten Projekten". Erlaubt es, eine feste Liste von Projektverzeichnissen zu definieren.
+- **Multi-Search**: Neues Kommando `<Leader>fG` (Multi-Grep), das gleichzeitig in allen gepinnten Projekten sucht. Ideal für Microservices oder zusammengehörige Repos.
+- **Projekt-Management**:
+    - `<Leader>fa`: Fügt das aktuelle Verzeichnis zur Projektliste hinzu.
+    - `<Leader>fP`: Öffnet einen Picker aller Projekte zum schnellen Wechseln (`cd`) oder zum Entfernen (`dd`).
+- **Speicherung**: Die Projekte werden persistent in `~/.config/nvim/projects` gespeichert.
+
 ## [2026-05-04] - Native Git Gutter-Signs
 - **Feature**: Implementierung einer leichtgewichtigen Gutter-Anzeige für Git-Änderungen (`+`, `~`, `_`).
 - **Technik**: Nutzt `git diff -U0` zur Analyse von Änderungen und die native Neovim `sign` API zur Anzeige.

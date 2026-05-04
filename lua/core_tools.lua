@@ -20,6 +20,9 @@ M.open_wiki_link = wiki.open_wiki_link
 M.wiki_backlinks = wiki.wiki_backlinks
 
 -- Suche & Navigation
+M.add_project        = search.add_project
+M.pinned_projects    = search.pinned_projects
+M.multi_grep         = search.multi_grep
 M.find_files         = search.find_files
 M.find_buffers       = search.find_buffers
 M.find_projects      = search.find_projects
