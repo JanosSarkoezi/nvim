@@ -1,5 +1,10 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-05] - Mark Manager: Intelligente Mark-Auswahl & Persistenz-Sync
+- **Bugfix**: Behebung des Problems, dass globale Marks (A-E) unerwartet überschrieben wurden ("Verschwinden").
+- **Intelligente Auswahl**: `set_mark_auto` prüft nun aktiv, welche Marks in Neovim bereits belegt sind. Unbenutzte Marks werden bevorzugt gewählt, bevor das älteste un-gepinnte Mark überschrieben wird.
+- **Startup-Sync**: Beim ersten Aufruf des Mark Managers werden bereits existierende Marks (z.B. aus der `shada`-Datei) automatisch in die interne LRU-Liste integriert und als "kürzlich verwendet" markiert. Dies verhindert, dass `A` direkt nach einem Neustart überschrieben wird, nur weil es am Anfang der Liste steht.
+
 ## [2026-05-05] - Speicherort für Projekte verschoben & Grep-Flags
 - **Refactoring**: Der Speicherort für die Datei `projects` wurde von `stdpath("config")` nach `stdpath("data")` verschoben (`~/.local/share/nvim/projects`).
 - **Feature**: `<Leader>fg` (Grep) und `<Leader>fG` (MultiGrep) unterstützen nun Flags (z.B. `-t lua`). Sie funktionieren jetzt wie der native `:grep` Befehl:

@@ -7,10 +7,32 @@ local global_mark_state = {
     order = {'A', 'B', 'C', 'D', 'E'},
     pinned = {}
 }
+local global_initialized = false
 
 -- Hilfsfunktion: Holt den State (Order & Pinned) für den jeweiligen Kontext
 local function get_state(is_global, bufnr)
     if is_global then
+        if not global_initialized then
+            -- Initialer Sync: Bereits gesetzte Marks ans Ende der Liste schieben (als "kürzlich verwendet")
+            local set_marks = {}
+            for _, m in ipairs(vim.fn.getmarklist()) do
+                local char = m.mark:sub(2)
+                if char:match("%u") then set_marks[char] = true end
+            end
+            
+            local new_order = {}
+            local existing = {}
+            for _, m in ipairs(global_mark_state.order) do
+                if set_marks[m] then
+                    table.insert(existing, m)
+                else
+                    table.insert(new_order, m)
+                end
+            end
+            for _, m in ipairs(existing) do table.insert(new_order, m) end
+            global_mark_state.order = new_order
+            global_initialized = true
+        end
         return global_mark_state.order, global_mark_state.pinned
     else
         local b = bufnr or vim.api.nvim_get_current_buf()
@@ -44,13 +66,32 @@ end
 function M.set_mark_auto(is_global)
     local bufnr = vim.api.nvim_get_current_buf()
     local list, pinned = get_state(is_global, bufnr)
+    
+    -- Prüfe, welche Marks aktuell belegt sind
+    local set_marks = {}
+    local mark_list = is_global and vim.fn.getmarklist() or vim.fn.getmarklist(bufnr)
+    for _, m in ipairs(mark_list) do
+        local char = m.mark:sub(2)
+        set_marks[char] = true
+    end
+
     local target = nil
     
-    -- Suche das älteste (erste in der Liste), das nicht gepinnt ist
+    -- 1. Suche ein Mark, das NICHT belegt und NICHT gepinnt ist
     for _, m in ipairs(list) do
-        if not pinned[m] then
+        if not set_marks[m] and not pinned[m] then
             target = m
             break
+        end
+    end
+
+    -- 2. Falls alle belegt, nimm das älteste (vorne in der Liste), das nicht gepinnt ist
+    if not target then
+        for _, m in ipairs(list) do
+            if not pinned[m] then
+                target = m
+                break
+            end
         end
     end
 
