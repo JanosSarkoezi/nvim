@@ -1,5 +1,16 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-06] - Mark Manager: Vereinfachung & UI-Polishing
+- **Vereinfachte Logik**: Die experimentelle Pinning-Logik und die persistente Speicherung wurden entfernt, um den Mark Manager schlank und wartbar zu halten.
+- **UI-Verbesserungen**:
+    - **Dynamische Spaltenbreite**: Der Picker berechnet nun automatisch die optimale Breite für die Dateinamen-Spalte basierend auf den vorhandenen Marks.
+    - **Inhalts-Vorschau**: Die Vorschau der Zeileninhalte wird nun intelligent gekürzt (`...`), um auch bei langen Zeilen ein sauberes Layout zu gewährleisten.
+- **Keymap-Klarheit**: 
+    - Trennung der Auto-Mark-Befehle beibehalten:
+    - `<Leader>ml`: Setzt ein lokales Mark (`a-e`) automatisch im nächsten freien/ersten Register.
+    - `<Leader>mg`: Setzt ein globales Mark (`A-E`) automatisch im nächsten freien/ersten Register.
+- **Automatisierung**: `autocmd` zum automatischen Entfernen von Trailing Whitespace beim Speichern in `options.lua` hinzugefügt.
+
 ## [2026-05-05] - Mark Manager: Intelligente Mark-Auswahl & Persistenz-Sync
 - **Bugfix**: Behebung des Problems, dass globale Marks (A-E) unerwartet überschrieben wurden ("Verschwinden").
 - **Intelligente Auswahl**: `set_mark_auto` prüft nun aktiv, welche Marks in Neovim bereits belegt sind. Unbenutzte Marks werden bevorzugt gewählt, bevor das älteste un-gepinnte Mark überschrieben wird.
