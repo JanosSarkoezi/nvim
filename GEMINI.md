@@ -32,3 +32,5 @@ Jede Suche (Dateien, Puffer, Projekte) soll über eine zentrale Funktion laufen,
 - Pfade immer relativ zum Projekt-Root (`cwd`) anzeigen.
 ## 5. Dokumentation & Fortschritt
 - **LOG.md**: Führe eine chronologische Liste aller wichtigen Änderungen, neuen Features und Entscheidungen in `LOG.md`. Dies dient als Gedächtnisstütze für den Projektfortschritt.
+## 6. Bemerkungen zum Workflow
+- **Diskussions-Modus**: Wenn ein Satz mit einem **"D"** endet, dient dies als Signal für eine reine Diskussion. In diesem Fall sollen keine Code-Anpassungen oder Änderungen am Projekt vorgenommen werden.

@@ -1,5 +1,11 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-12] - Git Status: Log-Integration
+- **Feature**: Neuer Shortcut `l` (Log) im Git Status Picker (`<Leader>gs`).
+    - Ermöglicht es, die Historie einer geänderten Datei direkt aus der Status-Übersicht heraus einzusehen, ohne die Datei vorher öffnen zu müssen.
+    - Öffnet einen neuen Picker mit dem Datei-Log; bei Auswahl eines Commits wird das `git show` für diese Datei angezeigt.
+- **Refactoring**: `M.git_log` in `lua/core/git.lua` unterstützt nun einen optionalen Dateipfad (`opts.file`), was die Funktion flexibler für Aufrufe aus anderen Tools macht.
+
 ## [2026-05-06] - Mark Manager: Vereinfachung & UI-Polishing
 - **Vereinfachte Logik**: Die experimentelle Pinning-Logik und die persistente Speicherung wurden entfernt, um den Mark Manager schlank und wartbar zu halten.
 - **UI-Verbesserungen**:

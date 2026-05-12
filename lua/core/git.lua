@@ -103,7 +103,13 @@ end
 -- Zeigt das Git-Log für die aktuelle Datei oder das gesamte Projekt
 function M.git_log(opts)
     opts = opts or {}
-    local file = opts.all and "" or vim.fn.expand("%")
+    local file
+    if opts.all then
+        file = ""
+    else
+        file = opts.file or vim.fn.expand("%")
+    end
+
     local is_project = (file == "")
     -- Nur innerhalb eines Git-Repos zulassen
     vim.fn.system("git rev-parse --is-inside-work-tree")
@@ -188,7 +194,7 @@ function M.git_status()
             print("Git-Status: Alles sauber.")
         end
     end
-    picker.open_picker(items, "Git Status (s=Stage, u=Unstage, CR=Diff)", function(selected)
+    picker.open_picker(items, "Git Status (s=Stage, u=Unstage, l=Log, CR=Diff)", function(selected)
         local file = selected:sub(4)
         M.show_git_output("git diff " .. vim.fn.shellescape(file), "Diff: " .. file, "diff")
     end, {
@@ -201,6 +207,10 @@ function M.git_status()
             local file = selected:sub(4)
             vim.fn.system("git restore --staged " .. vim.fn.shellescape(file))
             refresh_picker(bufnr)
+        end,
+        l = function(selected)
+            local file = selected:sub(4)
+            M.git_log({ file = file })
         end
     })
 end

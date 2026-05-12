@@ -28,7 +28,7 @@ Dieses Setup verzichtet bewusst auf schwere UI-Plugins und nutzt stattdessen die
 ### Git Tools
 | Keymap | Aktion | Beschreibung |
 | :--- | :--- | :--- |
-| `<Leader>gs` | Git Status | s=Stage, u=Unstage, CR=Diff |
+| `<Leader>gs` | Git Status | s=Stage, u=Unstage, l=Log, CR=Diff |
 | `<Leader>gl` | Git Log (Datei) | Historie der aktuellen Datei |
 | `<Leader>ga` | Git Log (Projekt) | Gesamtes Projekt-Log |
 | `<Leader>gL` | Git Log (Range) | Historie für markierten Bereich |
