@@ -10,7 +10,7 @@ vim.opt.number = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = "a"
 -- vim.opt.shada = ''
--- Ignore target directories 
+-- Ignore target directories
 vim.opt.wildignore:append { "**/target/**" }
 -- Suche erst in lokalen tags, dann in den JDK tags
 vim.opt.tags = {
@@ -59,7 +59,23 @@ vim.opt.tabstop = 4
 -- Folding
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
+-- 1. Den hässlichen Standard-Müll entfernen
+vim.opt.fillchars:append({ fold = " " }) -- Keine Striche mehr
+vim.opt.foldtext = ""                   -- Wir nutzen ein moderneres Rendering
+
+-- 2. Eine saubere Funktion für die Darstellung
+-- In neueren Nvim-Versionen ist es oft besser, den Text direkt zu setzen
+_G.simple_fold_text = function()
+    local pos = vim.v.foldstart
+    local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
+    local line_count = vim.v.foldend - vim.v.foldstart + 1
+
+    -- Rechtsbündige Anzeige der Zeilenanzahl vorbereiten
+    local suffix = "   " .. line_count .. " Zeilen "
+    return line .. suffix
+end
+
+vim.opt.foldtext = "v:lua.simple_fold_text()"
 vim.opt.foldlevel = 99
 -- Am ende der Suche nicht neu oben anfangen
 vim.opt.wrapscan = false
