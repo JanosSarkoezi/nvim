@@ -44,6 +44,7 @@ function M.pinned_projects()
             for _, p in ipairs(projects) do
                 if p ~= selected then table.insert(new_projects, p) end
             end
+            table.sort(new_projects)
             vim.fn.writefile(new_projects, projects_file)
             vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_projects)
             print("Projekt entfernt: " .. selected)

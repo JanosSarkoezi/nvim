@@ -5,6 +5,7 @@
     - Korrektur der Pfadangaben (jetzt relativ zum tatsächlichen Projekt-Root `~/.config/nvim/`).
     - Abbildung der neuen modularen Architektur unter `lua/core/` (Git, Wiki, Picker, etc.).
     - Aufnahme neuer Dateien wie `LOG.md` und `Ideen.md` in die Strukturübersicht.
+- **Projekt-Sortierung**: Die Liste der gepinnten Projekte (`~/.local/share/nvim/projects`) wird nun automatisch strikt alphabetisch (ASCII) sortiert. Dies stellt sicher, dass Verzeichnisse, die mit einem Punkt beginnen (wie `.config` oder `.local`), im Picker oben gruppiert werden.
 - **Konsistenz**: Sicherstellung, dass LLM-Interaktionen auf der realen Dateistruktur basieren, um Fehlplatzierungen von Code zu vermeiden.
 
 ## [2026-05-12] - Git Status: Log-Integration
