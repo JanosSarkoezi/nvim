@@ -1,5 +1,12 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-13] - Dokumentations-Update & Struktur-Alignment
+- **GEMINI.md Aktualisierung**: Die zentrale Kontext-Datei wurde auf den neuesten Stand gebracht.
+    - Korrektur der Pfadangaben (jetzt relativ zum tatsächlichen Projekt-Root `~/.config/nvim/`).
+    - Abbildung der neuen modularen Architektur unter `lua/core/` (Git, Wiki, Picker, etc.).
+    - Aufnahme neuer Dateien wie `LOG.md` und `Ideen.md` in die Strukturübersicht.
+- **Konsistenz**: Sicherstellung, dass LLM-Interaktionen auf der realen Dateistruktur basieren, um Fehlplatzierungen von Code zu vermeiden.
+
 ## [2026-05-12] - Git Status: Log-Integration
 - **Feature**: Neuer Shortcut `l` (Log) im Git Status Picker (`<Leader>gs`).
     - Ermöglicht es, die Historie einer geänderten Datei direkt aus der Status-Übersicht heraus einzusehen, ohne die Datei vorher öffnen zu müssen.
