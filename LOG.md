@@ -1,5 +1,15 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-14] - Jumplist Picker & Architektur-Erweiterung
+- **Neues Modul**: `lua/core/jumps.lua` implementiert.
+    - Erlaubt die visuelle Auswahl von Sprungpunkten aus der nativen Neovim-Jumplist.
+    - Zeigt Index, Dateiname, Zeilennummer und eine Inhalts-Vorschau an.
+    - Neueste Sprünge werden oben angezeigt (Reverse Order).
+    - Markierung (`>`) des aktuellen Standorts innerhalb der Jumplist.
+- **Integration**:
+    - Export via `core_tools.lua`.
+    - Keymap `<Leader>mj` (Marks/Jumps) in `lua/keymaps.lua` hinzugefügt.
+
 ## [2026-05-13] - Dokumentations-Update & Struktur-Alignment
 - **GEMINI.md Aktualisierung**: Die zentrale Kontext-Datei wurde auf den neuesten Stand gebracht.
     - Korrektur der Pfadangaben (jetzt relativ zum tatsächlichen Projekt-Root `~/.config/nvim/`).

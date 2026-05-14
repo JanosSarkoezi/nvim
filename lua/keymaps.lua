@@ -40,6 +40,7 @@ map("n", "<Leader>gc", core.git_branches, { desc = "Git Checkout (Branch)" })
 map("n", "<Leader>gh", core.git_stash, { desc = "Git Stash (h=Hide/Stash)" })
 -- Mark Manager
 map("n", "<Leader>mm", core.show_marks, { desc = "Marks Manager (L/A-E)" })
+map("n", "<Leader>mj", core.show_jumps, { desc = "Jumplist Picker" })
 map("n", "<Leader>ml", function() core.set_mark_auto(false) end, { desc = "Lokales Mark setzen (Auto)" })
 map("n", "<Leader>mg", function() core.set_mark_auto(true) end, { desc = "Globales Mark setzen (Auto)" })
 -- Hilfe & Übersicht

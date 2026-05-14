@@ -10,6 +10,7 @@ local wiki   = require("core.wiki")
 local search = require("core.search")
 local git    = require("core.git")
 local marks  = require("core.marks")
+local jumps  = require("core.jumps")
 local misc   = require("core.misc")
 
 -- Picker (Herzstück)
@@ -29,6 +30,7 @@ M.find_projects      = search.find_projects
 M.live_grep          = search.live_grep
 M.find_directories   = search.find_directories
 M.quickfix_to_picker = search.quickfix_to_picker
+M.show_jumps         = jumps.show_jumps
 
 -- Git Tools
 M.show_git_output   = git.show_git_output
