@@ -66,14 +66,14 @@ function M.show_jumps()
             local target_idx = tonumber(idx_str)
             -- Wir nutzen den nativen Jump-Befehl, um die interne Liste synchron zu halten
             -- "count<C-o>" oder ähnliches ist schwer, daher setzen wir den Cursor direkt
-            -- und simulieren einen Sprung, damit die Jumplist-Position aktualisiert wird.
+            -- and simulieren einen Sprung, damit die Jumplist-Position aktualisiert wird.
             local target_jump = jumps[target_idx + 1]
             if target_jump then
                 vim.cmd("buffer " .. target_jump.bufnr)
                 vim.api.nvim_win_set_cursor(0, {target_jump.lnum, target_jump.col})
             end
         end
-    end)
+    end, nil, true)
 end
 
 return M

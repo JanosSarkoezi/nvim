@@ -1,5 +1,16 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-22] - Auto-Suche im Picker (Workflow-Beschleunigung)
+- **Feature**: Einführung der `auto_search` Option in `M.open_picker` (`lua/core/picker.lua`).
+    - Wenn aktiv, wird beim Öffnen des Pickers automatisch der Such-Modus (`/`) ausgelöst.
+    - Ermöglicht sofortiges Tippen zum Filtern von Einträgen, ohne manuell `/` drücken zu müssen.
+- **Breite Integration**: Die Auto-Suche wurde standardmäßig für fast alle Picker aktiviert:
+    - **Dateien/Puffer/Verzeichnisse**: `find_files`, `find_buffers`, `find_directories`.
+    - **Projekte**: `find_projects`, `pinned_projects`.
+    - **Tools**: `show_marks`, `show_jumps`, `quickfix_to_picker`.
+    - **Such-Ergebnisse**: `live_grep`, `multi_grep` (für die Ergebnisliste).
+- **Philosophie-Erhalt**: Der "Buffer-First"-Ansatz bleibt gewahrt: Ein Druck auf `<Esc>` beendet die Suche und erlaubt weiterhin die native Vim-Navigation (z.B. `dd` zum Löschen) im Picker-Buffer.
+
 ## [2026-05-14] - Jumplist Picker & Architektur-Erweiterung
 - **Neues Modul**: `lua/core/jumps.lua` implementiert.
     - Erlaubt die visuelle Auswahl von Sprungpunkten aus der nativen Neovim-Jumplist.

@@ -49,7 +49,7 @@ function M.pinned_projects()
             vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_projects)
             print("Projekt entfernt: " .. selected)
         end
-    })
+    }, true)
 end
 
 -- Grep über ALLE gepinnten Projekte gleichzeitig
@@ -85,7 +85,7 @@ function M.multi_grep(args)
             vim.cmd("edit " .. parts[1])
             vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
         end
-    end)
+    end, nil, true)
 end
 
 function M.find_files()
@@ -93,7 +93,7 @@ function M.find_files()
   if #files == 0 then return end
   picker.open_picker(files, "Dateien finden", function(selected)
     vim.cmd("edit " .. selected)
-  end)
+  end, nil, true)
 end
 
 function M.find_buffers()
@@ -112,7 +112,7 @@ function M.find_buffers()
         if bufnr then
             vim.cmd("buffer " .. bufnr)
         end
-    end)
+    end, nil, true)
 end
 
 -- Projekt-Management via fd
@@ -124,7 +124,7 @@ function M.find_projects()
             vim.cmd("cd " .. choice)
             print("Projekt gewechselt zu: " .. vim.fn.getcwd())
         end
-    end)
+    end, nil, true)
 end
 
 function M.live_grep(args)
@@ -146,7 +146,7 @@ function M.live_grep(args)
             vim.cmd("edit " .. parts[1])
             vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
         end
-    end)
+    end, nil, true)
 end
 
 -- Commands registrieren
@@ -166,7 +166,7 @@ function M.find_directories()
             vim.cmd("cd " .. selected)
             print("CWD gewechselt zu: " .. vim.fn.getcwd())
         end
-    end)
+    end, nil, true)
 end
 
 -- Lädt die aktuelle Quickfix-Liste in den Picker
@@ -189,7 +189,7 @@ function M.quickfix_to_picker()
             vim.cmd("edit " .. parts[1])
             vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
         end
-    end)
+    end, nil, true)
 end
 
 return M

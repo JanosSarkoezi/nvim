@@ -2,7 +2,7 @@
 local M = {}
 
 -- Zentrale Funktion für Puffer-basierte Auswahl (M.open_picker)
-function M.open_picker(items, title, callback, extra_mappings)
+function M.open_picker(items, title, callback, extra_mappings, auto_search)
     local base_name = title or "Picker"
     
     -- Prüfen, ob bereits ein Puffer mit diesem Namen existiert
@@ -71,6 +71,11 @@ function M.open_picker(items, title, callback, extra_mappings)
     -- q / <Esc> bricht ab
     vim.keymap.set("n", "q", function() vim.api.nvim_win_close(winnr, true) end, opts)
     vim.keymap.set("n", "<Esc>", function() vim.api.nvim_win_close(winnr, true) end, opts)
+
+    -- Auto-Suche starten (/)
+    if auto_search then
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("/", true, false, true), "n", false)
+    end
 end
 
 return M

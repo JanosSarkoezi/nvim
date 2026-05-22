@@ -147,7 +147,7 @@ function M.show_marks()
                 end
             end
         end
-    })
+    }, true)
 end
 
 return M
