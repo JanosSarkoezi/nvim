@@ -17,3 +17,8 @@ end })
 vim.pack.add({ 'https://github.com/nvim-treesitter/nvim-treesitter' })
 vim.pack.add({ 'https://github.com/folke/tokyonight.nvim' })
 vim.cmd[[colorscheme tokyonight]]
+
+vim.cmd([[
+  set makeprg=mvn\ clean\ install\ -Dmaven.test.skip=true\ -q\ -f\ pom.xml
+  set errorformat=[ERROR]\ %f:[%l\\,%v]\ %m
+]])
