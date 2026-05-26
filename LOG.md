@@ -1,5 +1,14 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-22] - Mnemonische Keymaps & Gruppierte Hilfe
+- **Refactoring**: Vollständige Reorganisation der Tastaturbelegungen in `lua/keymaps.lua` nach einem mnemonischen System.
+    - **Vorteil**: Vermeidung von Delays (z.B. bei `<Leader>w` durch Verschiebung nach `<Leader>bw`).
+    - **Struktur**: Kategorisierung in Gruppen: `b` (Buffer), `f` (Find), `g` (Git), `m` (Marks), `q` (Quickfix/Quit), `w` (Wiki).
+- **UI-Verbesserung**: Überarbeitung der Keymap-Übersicht (`<Leader>?`) in `lua/core/misc.lua`.
+    - Die Liste wird nun automatisch nach Präfixen gruppiert (z.B. alle `<Leader>b` Mappings unter einer Überschrift).
+    - Erhöht die Entdeckbarkeit und Übersichtlichkeit der konfigurierten Befehle erheblich.
+- **Konsistenz**: Alle Beschreibungen (`desc`) wurden vereinheitlicht, um ein sauberes Erscheinungsbild im Picker zu gewährleisten.
+
 ## [2026-05-22] - Auto-Suche im Picker (Workflow-Beschleunigung)
 - **Feature**: Einführung der `auto_search` Option in `M.open_picker` (`lua/core/picker.lua`).
     - Wenn aktiv, wird beim Öffnen des Pickers automatisch der Such-Modus (`/`) ausgelöst.

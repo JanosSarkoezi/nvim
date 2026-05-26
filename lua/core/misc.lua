@@ -28,30 +28,55 @@ function M.toggle_terminal()
 end
 
 -- --- HILFE & ÜBERSICHT ---
--- Zeigt alle Keymaps mit einer Beschreibung (desc) im Picker an
+-- Zeigt alle Keymaps mit einer Beschreibung (desc) im Picker an, gruppiert nach Präfix
 function M.show_keymaps()
     local global_maps = vim.api.nvim_get_keymap("n")
     local buffer_maps = vim.api.nvim_buf_get_keymap(0, "n")
-    local lines = {}
+    
+    local grouped = {}
     local function process_maps(maps)
         for _, map in ipairs(maps) do
             if map.desc then
-                -- Formatiere: "LHS | Beschreibung"
-                -- Wir ersetzen das Leerzeichen (Leader) durch <Leader> für bessere Lesbarkeit
                 local lhs = map.lhs:gsub(" ", "<Leader>")
-                table.insert(lines, string.format("%-12s │ %s", lhs, map.desc))
+                -- Gruppe bestimmen (erster Teil nach <Leader>, z.B. "b" aus "<Leader>bw")
+                local group = "Andere"
+                if lhs:find("^<Leader>%a") then
+                    group = lhs:sub(1, 9) -- Nimmt "<Leader>X"
+                elseif not lhs:find("^<Leader>") then
+                    group = "Native / Andere"
+                end
+                
+                if not grouped[group] then grouped[group] = {} end
+                table.insert(grouped[group], string.format("%-12s │ %s", lhs, map.desc))
             end
         end
     end
+
     process_maps(global_maps)
     process_maps(buffer_maps)
-    table.sort(lines)
+
+    local lines = {}
+    local sorted_groups = {}
+    for g in pairs(grouped) do table.insert(sorted_groups, g) end
+    table.sort(sorted_groups)
+
+    for _, group in ipairs(sorted_groups) do
+        table.insert(lines, "── " .. group .. " ──")
+        table.sort(grouped[group])
+        for _, map_line in ipairs(grouped[group]) do
+            table.insert(lines, "  " .. map_line)
+        end
+        table.insert(lines, "") -- Leerzeile zwischen Gruppen
+    end
+
     if #lines == 0 then
         print("Keine Keymaps mit Beschreibung gefunden.")
         return
     end
+
     picker.open_picker(lines, "Keymap-Übersicht", function(selected)
-        -- Optional: Bei <CR> könnte man die Keymap erklären oder ausführen
+        -- Zeile ignorieren, wenn es ein Header ist
+        if selected:find("^──") then return end
     end)
 end
 
