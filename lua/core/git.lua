@@ -7,7 +7,7 @@ function M.setup_gutter()
     vim.fn.sign_define("GitAdd", { text = "+", texthl = "GitSignsAdd" })
     vim.fn.sign_define("GitChange", { text = "│", texthl = "GitSignsChange" })
     vim.fn.sign_define("GitDelete", { text = "_", texthl = "GitSignsDelete" })
-    
+
     -- Standard-Highlights falls nicht vom Theme gesetzt
     vim.cmd([[
         highlight default GitSignsAdd guifg=#b8bb26
@@ -37,7 +37,7 @@ function M.update_gutter_signs()
 
     local cmd = "git diff -U0 --no-color -- " .. vim.fn.shellescape(file)
     local diff = vim.fn.systemlist(cmd)
-    
+
     for _, line in ipairs(diff) do
         local old_start, old_count, new_start, new_count = line:match("^@@ %-(%d+),?(%d*) %+(%d+),?(%d*) @@")
         if old_start then
@@ -45,7 +45,7 @@ function M.update_gutter_signs()
             old_count = tonumber(old_count == "" and 1 or old_count)
             new_start = tonumber(new_start)
             new_count = tonumber(new_count == "" and 1 or new_count)
-            
+
             if new_count > 0 then
                 local name = old_count > 0 and "GitChange" or "GitAdd"
                 for i = 0, new_count - 1 do
@@ -60,10 +60,113 @@ function M.update_gutter_signs()
     end
 end
 
+-- Springt von einer Zeile im Diff zur entsprechenden Stelle in der Quelldatei
+function M.diff_jump()
+    local line = vim.api.nvim_get_current_line()
+    if line:match("^%-") then
+        print("Sprung nicht möglich: Zeile ist gelöscht.")
+        return
+    end
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    local cursor_row = vim.api.nvim_win_get_cursor(0)[1]
+
+    local file_path = nil
+    local hunk_start_line = nil
+    local hunk_buffer_row = nil
+
+    -- Rückwärts suchen nach Datei und Hunk
+    for i = cursor_row, 1, -1 do
+        local l = vim.api.nvim_buf_get_lines(bufnr, i-1, i, false)[1]
+        if not l then break end -- Absicherung gegen leere Zeilen
+
+        if not file_path then
+            file_path = l:match("^%+%+%+ b/(.*)")
+        end
+        if not hunk_start_line then
+            local _, new_start = l:match("^@@ %-(%d+),?%d* %+(%d+),?%d* @@")
+            if new_start then
+                hunk_start_line = tonumber(new_start)
+                hunk_buffer_row = i
+            end
+        end
+        if file_path and hunk_start_line then
+            break
+        end
+    end
+
+    -- Fallback-Logik für Dateipfad
+    if not file_path or not hunk_start_line then
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        file_path = file_path or bufname:match("Diff: (.*)")
+
+        if not file_path then
+            file_path = bufname:match("([^/]+)$")
+        end
+    end
+
+    -- Absolute Absicherung vor dem Sprung
+    if not file_path or not hunk_start_line or not hunk_buffer_row then
+        print("Fehler: Datei oder Hunk-Startzeile konnte nicht lokalisiert werden.")
+        return
+    end
+
+    -- Zeile im File berechnen
+    local target_line = hunk_start_line
+    for i = hunk_buffer_row + 1, cursor_row - 1 do
+        local l = vim.api.nvim_buf_get_lines(bufnr, i-1, i, false)[1]
+        if l and not l:match("^%-") then
+            target_line = target_line + 1
+        end
+    end
+
+    local current_win = vim.api.nvim_get_current_win()
+    local target_win = nil
+
+    -- 1. Prüfen, ob die Datei bereits in einem editierbaren Fenster offen ist
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local name = vim.api.nvim_buf_get_name(buf)
+        if name:find(file_path, 1, true) and not vim.wo[win].winfixbuf then
+            target_win = win
+            break
+        end
+    end
+
+    -- 2. Suchen nach dem Fenster LINKS vom aktuellen Fenster
+    if not target_win then
+        vim.cmd("wincmd h")
+        local left_win = vim.api.nvim_get_current_win()
+        if left_win ~= current_win and not vim.wo[left_win].winfixbuf then
+            target_win = left_win
+        else
+            -- Zurücksetzen, falls das linke Fenster nicht nutzbar war
+            vim.api.nvim_set_current_win(current_win)
+        end
+    end
+
+    -- 3. Falls kein Fenster gefunden wurde: Neues erstellen
+    if not target_win then
+        vim.cmd("leftabove vertical split")
+        target_win = vim.api.nvim_get_current_win()
+    end
+
+    -- 4. Sprung ausführen
+    vim.api.nvim_set_current_win(target_win)
+    vim.wo[target_win].winfixbuf = false
+    vim.cmd("edit " .. vim.fn.fnameescape(file_path))
+
+    -- Sicherstellen, dass wir nicht über das Dateiende hinausspringen
+    local total_lines = vim.api.nvim_buf_line_count(0)
+    target_line = math.min(target_line, total_lines)
+
+    vim.api.nvim_win_set_cursor(0, { target_line, 0 })
+end
+
 -- Hilfsfunktion zur Anzeige von Git-Output in einem Scratch-Buffer
 function M.show_git_output(cmd, title, filetype)
     local base_name = title or "Git Output"
-    
+
     -- Prüfen auf Duplikate
     local existing_bufnr = vim.fn.bufnr(base_name)
     if existing_bufnr ~= -1 and vim.api.nvim_buf_is_valid(existing_bufnr) then
@@ -96,8 +199,26 @@ function M.show_git_output(cmd, title, filetype)
     -- Fenster auf diesen Puffer fixieren
     vim.wo[winnr].winfixbuf = true
     local opts = { buffer = bufnr, silent = true }
-    vim.keymap.set("n", "q", function() vim.api.nvim_win_close(winnr, true) end, opts)
-    vim.keymap.set("n", "<Esc>", function() vim.api.nvim_win_close(winnr, true) end, opts)
+
+    local function smart_close()
+        if #vim.api.nvim_list_wins() > 1 then
+            -- pcall fängt ab, falls das Fenster bereits anderweitig geschlossen wurde
+            pcall(vim.api.nvim_win_close, 0, true)
+        else
+            -- Wenn es das letzte Fenster ist, laden wir einfach einen leeren Buffer
+            -- ZUERST winfixbuf deaktivieren, sonst erlaubt Vim den Buffer-Wechsel nicht
+            vim.wo[0].winfixbuf = false
+            local empty_buf = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_win_set_buf(0, empty_buf)
+        end
+    end
+
+    vim.keymap.set("n", "q", smart_close, opts)
+    vim.keymap.set("n", "<Esc>", smart_close, opts)
+
+    if filetype == "diff" then
+        vim.keymap.set("n", "<CR>", function() M.diff_jump() end, opts)
+    end
 end
 
 -- Zeigt das Git-Log für die aktuelle Datei oder das gesamte Projekt

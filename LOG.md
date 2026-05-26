@@ -1,5 +1,12 @@
 # LOG.md - Fortschritt & Änderungen
 
+## [2026-05-26] - Git Diff Jump
+- **Feature**: Direkter Sprung zur Quelldatei aus der Git-Diff-Ansicht.
+    - Wenn man `<Leader>gs` nutzt und eine Datei auswählt, öffnet sich der Diff.
+    - Drückt man dort `<CR>` (Enter) auf einer hinzugefügten oder unveränderten Zeile, springt der Cursor direkt an die entsprechende Stelle in der Originaldatei.
+    - Gelöschte Zeilen werden mit einem Hinweis quittiert.
+- **Implementierung**: Neue Funktion `M.diff_jump()` in `lua/core/git.lua`.
+
 ## [2026-05-22] - Mnemonische Keymaps & Gruppierte Hilfe
 - **Refactoring**: Vollständige Reorganisation der Tastaturbelegungen in `lua/keymaps.lua` nach einem mnemonischen System.
     - **Vorteil**: Vermeidung von Delays (z.B. bei `<Leader>w` durch Verschiebung nach `<Leader>bw`).
