@@ -1,6 +1,6 @@
 # mini-nvim
 
-Eine modulare, minimalistische Neovim-Konfiguration mit einem Fokus auf **Buffer-First UI** und native Power. 
+Eine modulare, minimalistische Neovim-Konfiguration mit einem Fokus auf **Buffer-First UI** und native Power.
 
 Dieses Setup verzichtet bewusst auf schwere UI-Plugins und nutzt stattdessen die integrierten Funktionen von Neovim kombiniert mit mächtigen Shell-Tools wie `fd` und `rg`.
 
@@ -15,41 +15,73 @@ Dieses Setup verzichtet bewusst auf schwere UI-Plugins und nutzt stattdessen die
 
 ## Wichtige Keymaps
 
-### Suche & Navigation
-| Keymap | Aktion | Tool |
-| :--- | :--- | :--- |
-| `<Leader>ff` | Dateien suchen | `fd` |
-| `<Leader>fb` | Puffer auswählen | Native |
-| `<Leader>fg` | Live Grep | `rg` |
-| `<Leader>fd` | Verzeichnis wechseln | `fd` |
-| `<Leader>fp` | Projekt wechseln | `fd` |
-| `<Leader>fq` | Quickfix bearbeiten | Picker |
+The configuration uses mnemonic keymaps for easier recall:
+- `b` (Buffer)
+- `f` (Find)
+- `g` (Git)
+- `m` (Marks)
+- `q` (Quickfix/Quit)
+- `w` (Wiki)
 
-### Git Tools
-| Keymap | Aktion | Beschreibung |
+### Buffer (b)
+| Keymap | Action | Description |
 | :--- | :--- | :--- |
-| `<Leader>gs` | Git Status | s=Stage, u=Unstage, l=Log, CR=Diff |
-| `<Leader>gl` | Git Log (Datei) | Historie der aktuellen Datei |
-| `<Leader>ga` | Git Log (Projekt) | Gesamtes Projekt-Log |
-| `<Leader>gL` | Git Log (Range) | Historie für markierten Bereich |
-| `<Leader>gb` | Git Blame | Info zur aktuellen Zeile |
-| `<Leader>gc` | Git Checkout | Branch-Switcher |
-| `<Leader>gh` | Git Stash | Liste; CR=Apply, d=Drop |
+| `<Leader>bw` | Buffer Write | Save current buffer |
+| `<Leader>bd` | Buffer Delete | Close current buffer |
+| `<Leader>bn` | Buffer Next | Go to next buffer |
+| `<Leader>bp` | Buffer Previous | Go to previous buffer |
+| `<Leader>bl` | Buffer List | Select buffer from picker |
 
-### Mark Manager
-| Keymap | Aktion | Register |
+### Find & Navigation (f)
+| Keymap | Action | Tool |
 | :--- | :--- | :--- |
-| `<Leader>ml` | Mark setzen (Auto) | Lokal (`a-e`) |
-| `<Leader>mg` | Mark setzen (Auto) | Global (`A-E`) |
-| `<Leader>mm` | Mark Manager | p=Pin, dd=Delete, CR=Jump |
+| `<Leader>ff` | Find Files | `fd` |
+| `<Leader>fg` | Find Grep (Live) | `rg` (interactive prompt) |
+| `<Leader>fd` | Find Directory | Search directories with `fd` |
+| `<Leader>fp` | Find Project | Search for Git projects |
+| `<Leader>fP` | Find Pinned | List your pinned projects |
+| `<Leader>fa` | Find Add | Pin the current project |
+| `<Leader>fG` | Find Multi-Grep | Search across all pinned projects |
 
-### Wiki & System
-| Keymap | Aktion | Beschreibung |
+### Git Tools (g)
+| Keymap | Action | Description |
 | :--- | :--- | :--- |
-| `<Leader>wp` | Wiki Link öffnen | Folgt `[[link]]` |
-| `<Leader>wb` | Wiki Backlinks | Sucht Verweise auf aktuelle Datei |
-| `<Leader>t` | Terminal Toggle | Terminal am unteren Rand |
-| `<Leader>?` | Hilfe | Keymap-Übersicht anzeigen |
+| `<Leader>gs` | Git Status | **s**tage, **u**nstage, **l**og, **CR**=Diff |
+| `<Leader>gl` | Git Log (File) | History of the current file |
+| `<Leader>ga` | Git Log (All) | Project-wide history |
+| `<Leader>gL` | Git Log (Range) | History for visual selection |
+| `<Leader>gb` | Git Blame | Info for the current line |
+| `<Leader>gc` | Git Checkout | Branch switcher |
+| `<Leader>gh` | Git Stash | **CR**=Apply, **d**rop |
+
+**Hinweis zum Git Diff:** Wenn du einen Diff betrachtest (via `<Leader>gs` -> `CR`), kannst du auf jeder hinzugefügten oder Kontext-Zeile `CR` drücken, um direkt an diese Stelle in der Quelldatei zu springen. Die Datei öffnet sich in einem Master-Detail-Layout (Quelldatei links, Diff rechts).
+
+### Mark Manager & Jumps (m)
+| Keymap | Action | Description |
+| :--- | :--- | :--- |
+| `<Leader>ml` | Mark Local (Auto) | Set local mark (`a-e`) |
+| `<Leader>mg` | Mark Global (Auto) | Set global mark (`A-E`) |
+| `<Leader>mm` | Mark Manager | **p**in, **dd**=Delete, **CR**=Jump |
+| `<Leader>mj` | Mark Jumps | Browse the jumplist |
+
+### Quickfix & Quit (q)
+| Keymap | Action | Description |
+| :--- | :--- | :--- |
+| `<Leader>ql` | Quickfix List | Open current list in picker |
+| `<Leader>qn` | Quickfix Next | Switch to newer quickfix list |
+| `<Leader>qp` | Quickfix Prev | Switch to older quickfix list |
+| `<Leader>qq` | Quit | Exit Neovim |
+| `<UP>` / `<DOWN>` | QF Navigate | Move through quickfix entries |
+| `<LEFT>` / `<RIGHT>` | QF Window | Open (`:cope`) / Close (`:cclo`) |
+
+### Wiki & System (w)
+| Keymap | Action | Description |
+| :--- | :--- | :--- |
+| `<Leader>ww` | Wiki Page Open | Follows `[[link]]` |
+| `<Leader>wb` | Wiki Backlinks | Search for references |
+| `<Leader>h` | Help: Hide | Clear search highlighting |
+| `<Leader>t` | Terminal Toggle | Bottom terminal split |
+| `<Leader>?` | Help: Keymaps | Show all keymap overview |
 
 ## Struktur
 

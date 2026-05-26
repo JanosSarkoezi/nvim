@@ -3,9 +3,9 @@ local M = {}
 local picker = require("core.picker")
 
 -- Speicher für die Rotation der automatischen Marks (Zähler pro Buffer / Global)
-local last_used_local_idx = 0
 local last_used_global_idx = 0
 
+-- Setzt ein Mark automatisch im nächsten freien oder rotierenden Register
 -- Setzt ein Mark automatisch im nächsten freien oder rotierenden Register
 function M.set_mark_auto(is_global)
     local bufnr = vim.api.nvim_get_current_buf()
@@ -35,8 +35,30 @@ function M.set_mark_auto(is_global)
             last_used_global_idx = (last_used_global_idx % #list) + 1
             target = list[last_used_global_idx]
         else
-            last_used_local_idx = (last_used_local_idx % #list) + 1
-            target = list[last_used_local_idx]
+            -- Buffer-lokale Variable initialisieren, falls nicht vorhanden
+            if not vim.b[bufnr].last_used_local_idx then
+                vim.b[bufnr].last_used_local_idx = 0
+            end
+            vim.b[bufnr].last_used_local_idx = (vim.b[bufnr].last_used_local_idx % #list) + 1
+            target = list[vim.b[bufnr].last_used_local_idx]
+        end
+    end
+
+    -- BONUS: Zähler synchronisieren, damit die Rotation immer beim zuletzt
+    -- genutzten Mark weitermacht, selbst wenn es über Schritt 1 (Lücke füllen) gesetzt wurde.
+    if not is_global then
+        for idx, m in ipairs(list) do
+            if m == target then
+                vim.b[bufnr].last_used_local_idx = idx
+                break
+            end
+        end
+    else
+        for idx, m in ipairs(list) do
+            if m == target then
+                last_used_global_idx = idx
+                break
+            end
         end
     end
 
@@ -156,7 +178,7 @@ function M.show_marks()
                 end
             end
         end
-    }, true)
+    }, false)
 end
 
 return M
