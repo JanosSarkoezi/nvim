@@ -21,9 +21,11 @@ Dieses Dokument sammelt Konzepte für die Erweiterung der Neovim-Konfiguration, 
 - **Buffer-Terminals**: Funktion zum Öffnen von `:terminal` in benannten Buffern (z. B. `Term: <Verzeichnis>`), um sie über den Buffer-Picker auffindbar zu machen.
 
 ## 5. UI & UX Refinement
-- **Native Statusline**: Handgebaute Statuszeile in `lua/options.lua` ohne Plugin-Abhängigkeit (Anzeige von Mode, Git, LSP).
+- **Statusline-Erweiterung**: Die native Statusline existiert bereits in `lua/options.lua` (`%!v:lua.statusline()`, ohne Plugin-Abhängigkeit). Offen sind zusätzliche Abschnitte für Mode, Git-Branch und LSP-Status.
 - **Quickfix-Editing**: Einträge im Picker mit `dd` löschen und die Quickfix-Liste so interaktiv filtern.
 
 ## 6. Git Erweiterungen
 - **Commit Browser**: `git log` im Picker anzeigen und Diffs in einem Split-Window via `show_git_output` öffnen.
-- [x] **Native Gutter-Signs**: Anzeige von Änderungen am Rand (Sign Column) mittels nativer `sign`-Funktionen und `git diff`.
+
+## Erledigt
+- [x] **Native Gutter-Signs**: Anzeige von Änderungen am Rand (Sign Column) mittels nativer `sign`-Funktionen und `git diff` (umgesetzt 2026-05-04, `lua/core/git.lua` → `setup_gutter`).

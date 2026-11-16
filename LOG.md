@@ -1,5 +1,19 @@
 # LOG.md - Fortschritt & Änderungen
 
+> **Hinweis:** Dies ist die chronologische **Historie** (neueste Einträge oben). Die maßgebliche, aktuelle Referenz für Keymaps und Struktur ist die [README.md](./README.md). Ältere Einträge können überholte Keymaps oder Pfade nennen (z. B. `<Leader>fq` → heute `<Leader>ql`, `<leader>co`/`<leader>cn` → heute `<Leader>qp`/`<Leader>qn`).
+
+## [2026-11-16] - Dokumentations-Überholung (Realitäts-Alignment)
+- **AGENTS.md erstellt**: Zentraler, maßgeblicher LLM-Kontext für alle Coding-Agenten. `GEMINI.md` ist seitdem nur noch ein Verweis darauf — das verhindert driftende Duplikate der Struktur-/Picker-Doku.
+- **README.md korrigiert**:
+    - Neovim-Anforderung von 0.10+ auf **0.12+** berichtigt (notwendig für `vim.pack`).
+    - Struktur-Diagramm um das fehlende `lua/core/jumps.lua` ergänzt.
+    - Plugin-Abhängigkeiten (`nvim-treesitter`, `tokyonight.nvim`) in den Anforderungen dokumentiert; Philosophie-Aussage präzisiert ("keine schweren UI-Plugins").
+    - Tabellen-Überschrift "Wiki & System (w)" präzisiert: `<Leader>h`, `<Leader>t`, `<Leader>?` haben kein `w`-Präfix.
+- **LLM-Kontext (AGENTS.md) auf Code-Stand gebracht**: Picker-Spezifikation inkl. `auto_search` und `<Esc>`-Semantik; bislang nirgends dokumentierte `init.lua`-Features aufgenommen (Git-Gutter via `setup_gutter`, `PackChanged`→`TSUpdate`-Autocmd, Maven-`makeprg`/`errorformat`); korrekter Projekt-Speicherort (`stdpath("data")`).
+- **LOG.md bereinigt**: Verwaiste Bullet-Zeilen am Dateiende in die passenden Dated-Einträge integriert; Historien-Hinweis am Dateianfang ergänzt.
+- **Nachtrag**: README dokumentierte für den Mark Manager noch "p=Pin" — das Pinning wurde bereits am 2026-05-06 entfernt; korrigiert. Der dazugehörige tote Fassaden-Export (`core_tools.lua` → `marks.toggle_mark_pin`) ist als Code-Befund notiert.
+- **Ideen.md präzisiert**: "Native Statusline" — die Basis existiert bereits in `options.lua`, offen sind nur Mode/Git/LSP-Abschnitte. Erledigten Punkt (Gutter-Signs) in eine eigene "Erledigt"-Sektion verschoben.
+
 ## [2026-05-26] - Git Diff Jump
 - **Feature**: Direkter Sprung zur Quelldatei aus der Git-Diff-Ansicht.
     - Wenn man `<Leader>gs` nutzt und eine Datei auswählt, öffnet sich der Diff.
@@ -80,7 +94,7 @@
 - **Projekt-Management**:
     - `<Leader>fa`: Fügt das aktuelle Verzeichnis zur Projektliste hinzu.
     - `<Leader>fP`: Öffnet einen Picker aller Projekte zum schnellen Wechseln (`cd`) oder zum Entfernen (`dd`).
-- **Speicherung**: Die Projekte werden persistent in `~/.config/nvim/projects` gespeichert.
+- **Speicherung**: Die Projekte werden persistent in `~/.config/nvim/projects` gespeichert. *(→ **veraltet**: am 2026-05-05 nach `~/.local/share/nvim/projects` verschoben.)*
 
 ## [2026-05-04] - Native Git Gutter-Signs
 - **Feature**: Implementierung einer leichtgewichtigen Gutter-Anzeige für Git-Änderungen (`+`, `~`, `_`).
@@ -141,7 +155,7 @@
 - **Git Stash-Picker**: `<Leader>gh` zeigt Stashes an. Auswahl macht `apply`, `d` macht `drop`.
 - **Puffer-Picker**: `<Leader>fb` öffnet eine Liste aller geladenen Puffer im Picker.
 - **Quickfix-Picker**: `<Leader>fq` lädt die aktuelle Quickfix-Liste in den Picker zur Bearbeitung/Filterung.
-- **Terminal-Toggle**: `<Leader>t` öffnet/schließt ein Terminal-Fenster am unteren Rand. Der Terminal-Puffer bleibt im Hintergrund erhalten.
+- **Terminal-Toggle**: `<Leader>t` öffnet/schließt ein Terminal-Fenster am unteren Rand. Der Terminal-Puffer bleibt im Hintergrund erhalten. Exit aus dem Terminal-Mode über `<Esc><Esc>`.
 - **Wiki-Backlinks**: `<Leader>wb` sucht nach allen Dateien, die auf die aktuelle Notiz verweisen, und zeigt sie im Picker an.
 ### Behoben
 - **Wiki-Links**: Die Link-Erkennung in `core_tools.lua` priorisiert nun den Link direkt unter dem Cursor statt immer nur den ersten in der Zeile.
@@ -183,5 +197,3 @@
 ### Architektur-Entscheidungen
 - **Chaining/Narrowing**: Eine experimentelle "Suche in Auswahl"-Funktion wurde nach Nutzertest zurückgerollt, um den Fokus auf Einfachheit zu legen.
 - **GEMINI.md Update**: Mandat zur Führung der `LOG.md` hinzugefügt.
-- 2026-04-20: git_log_range implementiert. Unterstützt nun git log -L für markierte Bereiche im Visual Mode (<Leader>gL).
-- 2026-04-20: Manuelle Anpassungen in lua/keymaps.lua: F1-Mapping und Fluchtweg aus dem Terminal-Mode (<Esc><Esc>).

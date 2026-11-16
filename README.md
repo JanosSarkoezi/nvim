@@ -2,7 +2,7 @@
 
 Eine modulare, minimalistische Neovim-Konfiguration mit einem Fokus auf **Buffer-First UI** und native Power.
 
-Dieses Setup verzichtet bewusst auf schwere UI-Plugins und nutzt stattdessen die integrierten Funktionen von Neovim kombiniert mit mächtigen Shell-Tools wie `fd` und `rg`.
+Dieses Setup verzichtet bewusst auf schwere UI-Plugins (Fuzzy-Finder, Statusline-Frameworks, …) und nutzt stattdessen die integrierten Funktionen von Neovim kombiniert mit mächtigen Shell-Tools wie `fd` und `rg`.
 
 ## Philosophie
 
@@ -61,7 +61,7 @@ The configuration uses mnemonic keymaps for easier recall:
 | :--- | :--- | :--- |
 | `<Leader>ml` | Mark Local (Auto) | Set local mark (`a-e`) |
 | `<Leader>mg` | Mark Global (Auto) | Set global mark (`A-E`) |
-| `<Leader>mm` | Mark Manager | **p**in, **dd**=Delete, **CR**=Jump |
+| `<Leader>mm` | Mark Manager | **dd**=Delete, **CR**=Jump |
 | `<Leader>mj` | Mark Jumps | Browse the jumplist |
 
 ### Quickfix & Quit (q)
@@ -74,14 +74,14 @@ The configuration uses mnemonic keymaps for easier recall:
 | `<UP>` / `<DOWN>` | QF Navigate | Move through quickfix entries |
 | `<LEFT>` / `<RIGHT>` | QF Window | Open (`:cope`) / Close (`:cclo`) |
 
-### Wiki & System (w)
+### Wiki (w), System & Hilfe
 | Keymap | Action | Description |
 | :--- | :--- | :--- |
 | `<Leader>ww` | Wiki Page Open | Follows `[[link]]` |
 | `<Leader>wb` | Wiki Backlinks | Search for references |
-| `<Leader>h` | Help: Hide | Clear search highlighting |
-| `<Leader>t` | Terminal Toggle | Bottom terminal split |
-| `<Leader>?` | Help: Keymaps | Show all keymap overview |
+| `<Leader>h` | Help: Hide | Clear search highlighting *(ohne Präfix)* |
+| `<Leader>t` | Terminal Toggle | Bottom terminal split *(ohne Präfix)* |
+| `<Leader>?` | Help: Keymaps | Show all keymap overview *(ohne Präfix)* |
 
 ## Struktur
 
@@ -97,8 +97,9 @@ Das Projekt ist modular aufgebaut, um Wartbarkeit und Übersichtlichkeit zu gew�
 │   └── core/          -- Spezialisierte Module
 │       ├── picker.lua -- Herzstück: Buffer-UI
 │       ├── search.lua -- Suche & Navigation
-│       ├── git.lua    -- Git-Integration
+│       ├── git.lua    -- Git-Integration (inkl. Gutter-Signs)
 │       ├── marks.lua  -- Mark-Management
+│       ├── jumps.lua  -- Jumplist-Picker
 │       ├── wiki.lua   -- Wissensmanagement
 │       └── misc.lua   -- Hilfe & Terminal
 └── LOG.md             -- Chronologisches Änderungsprotokoll
@@ -106,10 +107,11 @@ Das Projekt ist modular aufgebaut, um Wartbarkeit und Übersichtlichkeit zu gew�
 
 ## Anforderungen
 
-- **Neovim 0.10+**
+- **Neovim 0.12+** — genutzt wird das native Plugin-Management `vim.pack` (`winfixbuf` für die Picker-Fenster benötigt mindestens 0.10).
+- **Plugins** (via `vim.pack`, kein Plugin-Manager): `nvim-treesitter` (Syntax-Highlighting; Auto-Update über `TSUpdate` bei Paket-Änderung) und `tokyonight.nvim` (Farbschema).
 - **fd**: Für Dateisuche.
 - **ripgrep (rg)**: Für Textsuche.
 - **git**: Für Versionsverwaltung.
 
 ---
-*Für eine detaillierte Historie der Änderungen siehe [LOG.md](./LOG.md).*
+*Für eine detaillierte Historie der Änderungen siehe [LOG.md](./LOG.md). Für LLM-gestützte Arbeit an dieser Konfiguration gilt [AGENTS.md](./AGENTS.md) als Kontext.*

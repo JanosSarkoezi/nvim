@@ -1,52 +1,13 @@
-# GEMINI.md - Neovim Configuration Context
+# GEMINI.md - Verweis auf den maßgeblichen Kontext
 
-## 1. Philosophie & Architektur
-- **Modularer Minimalismus**: Logik wird in `lua/` und spezialisierten Modulen in `lua/core/` getrennt. Kein Bloat, klare Struktur.
-- **Buffer-First UI**: Statt starrer Pop-ups nutzen wir "Scratch-Buffer" für Suchen und Listen. Das erlaubt Filtern mit `/`, `dd` zum Entfernen von Einträgen und die normale Vim-Navigation.
-- **Native Power**: Nutzung des integrierten Package-Systems (`vim.pack`) und der Quickfix-Liste.
+Diese Datei ist nur ein Einstiegspunkt für Gemini. Der vollständige, aktuell gehaltene Kontext für alle LLM-Agenten liegt in **[AGENTS.md](./AGENTS.md)** — bitte lies und befolge diese Datei.
 
-## 2. Ordnerstruktur
-```text
-~/.config/nvim/
-├── init.lua           -- Einstiegspunkt, lädt Module
-├── GEMINI.md          -- Dieser Kontext für LLMs
-├── LOG.md             -- Chronik der Änderungen & Entscheidungen
-├── Ideen.md           -- Brainstorming & zukünftige Features
-├── README.md          -- Projektübersicht
-└── lua/
-    ├── options.lua    -- vim.opt Einstellungen
-    ├── keymaps.lua    -- Globale Leader-Mappings
-    ├── core_tools.lua -- Übergreifende Hilfsfunktionen
-    └── core/          -- Modularisierte Kern-Logik
-        ├── git.lua    -- Git-Integration (Diff, Blame, etc.)
-        ├── marks.lua  -- Mark-Management
-        ├── misc.lua   -- Verschiedene kleine Helfer
-        ├── picker.lua -- Zentrale Buffer-Picker Logik
-        ├── search.lua -- Grep/Ripgrep Integration
-        └── wiki.lua   -- Wiki-Logik & Zettelkasten
-```
+Sie enthält:
 
-## 3. Tool-Spezifikationen (für LLM-Generierung)
-### Buffer-basierte Auswahl (M.open_picker)
-Jede Suche (Dateien, Puffer, Projekte) soll über die zentrale Funktion in `lua/core/picker.lua` laufen, die:
-1. Einen neuen temporären Buffer erstellt (`buftype=nofile`).
-2. Die Ergebnisse dort hineinschreibt.
-3. Lokale Keymaps setzt:
-   - `<CR>`: Wählt den Eintrag unter dem Cursor aus und schließt den Buffer.
-   - `q` / `<Esc>`: Bricht ab.
-   - Der Benutzer kann Standard-Vim-Befehle (`/`, `d`, `G`) zum Filtern nutzen.
-
-### Wiki & Projekt-Logik
-- **Wiki**: Unterstützung für `[[link]]` mit automatischer Verzeichniserstellung (siehe `lua/core/wiki.lua`).
-- **Projekt-Anker**: Suche nach Verzeichnissen wie `liquibase/` oder `.git/` via `fd`.
-
-## 4. Coding-Standard
-- Nutze `vim.api` für Buffer-Manipulationen.
-- Vermeide externe Plugin-Abhängigkeiten, wo Shell-Tools (`fd`, `rg`) ausreichen.
-- Pfade immer relativ zum Projekt-Root (`cwd`) anzeigen.
-
-## 5. Dokumentation & Fortschritt
-- **LOG.md**: Führe eine chronologische Liste aller wichtigen Änderungen, neuen Features und Entscheidungen in `LOG.md`. Dies dient als Gedächtnisstütze für den Projektfortschritt.
-
-## 6. Bemerkungen zum Workflow
-- **Diskussions-Modus**: Wenn ein Satz mit einem **"D"** endet, dient dies als Signal für eine reine Diskussion. In diesem Fall sollen keine Code-Anpassungen oder Änderungen am Projekt vorgenommen werden.
+1. Philosophie & Architektur (Modularer Minimalismus, Buffer-First UI, Native Power)
+2. Ordnerstruktur (maßgeblich, synchron zur README.md)
+3. Tool-Spezifikationen (`M.open_picker` inkl. `auto_search`-Semantik, Wiki, Projekte)
+4. `init.lua`-Besonderheiten (Plugins, Git-Gutter, Maven-`makeprg`)
+5. Coding-Standard
+6. Dokumentations-Pflichten (LOG.md führen, Struktur-Sync)
+7. Workflow-Signale (z. B. "D" am Satzende = reine Diskussion, keine Änderungen)
