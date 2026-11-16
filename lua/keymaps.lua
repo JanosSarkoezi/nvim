@@ -55,6 +55,11 @@ map("n", "<Leader>qp", function() navigate_qf_stack("colder") end, { desc = "Qui
 
 -- Native Arrow-Keys für Quickfix (immer noch nützlich)
 local function move_quickfix(direction)
+    -- Ohne Quickfix-Liste: normale Cursor-Bewegung statt Fehler-Spam
+    if #vim.fn.getqflist() == 0 then
+        vim.cmd(direction == "next" and "normal! j" or "normal! k")
+        return
+    end
     local cmd = direction == "next" and "cnext" or "cprev"
     local ok = pcall(vim.cmd, cmd)
     if not ok then

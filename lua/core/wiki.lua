@@ -29,7 +29,7 @@ function M.open_wiki_link()
         if vim.fn.isdirectory(dir) == 0 then
             vim.fn.mkdir(dir, "p")
         end
-        vim.cmd("edit " .. file_path)
+        vim.cmd("edit " .. vim.fn.fnameescape(file_path))
     else
         print("Kein Wiki-Link gefunden.")
     end

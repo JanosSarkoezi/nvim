@@ -298,6 +298,18 @@ function M.git_blame_line()
     end
 end
 
+-- Extrahiert den Dateipfad aus einer "git status --short"-Zeile.
+-- Berücksichtigt Renames ("old -> new") und von Git gequotete Pfade.
+local function parse_status_path(line)
+    local path = line:sub(4)
+    local renamed = path:match(" -> (.+)$")
+    if renamed then path = renamed end
+    if path:sub(1, 1) == '"' and path:sub(-1) == '"' then
+        path = path:sub(2, -2):gsub("\\(.)", "%1")
+    end
+    return path
+end
+
 -- Zeigt den Git-Status und erlaubt das Diffen, Staging und Unstaging
 function M.git_status()
     local function get_status_items()
@@ -316,21 +328,21 @@ function M.git_status()
         end
     end
     picker.open_picker(items, "Git Status (s=Stage, u=Unstage, l=Log, CR=Diff)", function(selected)
-        local file = selected:sub(4)
+        local file = parse_status_path(selected)
         M.show_git_output("git diff " .. vim.fn.shellescape(file), "Diff: " .. file, "diff")
     end, {
         s = function(selected, bufnr)
-            local file = selected:sub(4)
+            local file = parse_status_path(selected)
             vim.fn.system("git add " .. vim.fn.shellescape(file))
             refresh_picker(bufnr)
         end,
         u = function(selected, bufnr)
-            local file = selected:sub(4)
+            local file = parse_status_path(selected)
             vim.fn.system("git restore --staged " .. vim.fn.shellescape(file))
             refresh_picker(bufnr)
         end,
         l = function(selected)
-            local file = selected:sub(4)
+            local file = parse_status_path(selected)
             M.git_log({ file = file })
         end
     })

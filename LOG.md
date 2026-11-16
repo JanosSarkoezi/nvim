@@ -2,6 +2,16 @@
 
 > **Hinweis:** Dies ist die chronologische **Historie** (neueste Einträge oben). Die maßgebliche, aktuelle Referenz für Keymaps und Struktur ist die [README.md](./README.md). Ältere Einträge können überholte Keymaps oder Pfade nennen (z. B. `<Leader>fq` → heute `<Leader>ql`, `<leader>co`/`<leader>cn` → heute `<Leader>qp`/`<Leader>qn`).
 
+## [2026-11-16] - Bugfix-Runde im Core-Code (Sicherheits- & Korrektheitsfixes)
+- **Shell-Injection behoben** (`search.lua`): `live_grep`/`multi_grep` bauen den rg-Aufruf jetzt als **Argumentenliste** (`vim.fn.systemlist({...})`) statt als Shell-String — `:Grep foo; <befehl>` kann keinen Shell-Befehl mehr einschleusen. Flags wie `-t py` bleiben nutzbar. Hinweis: per Shell gequotete Mehrwort-Patterns (`:Grep "foo bar"`) funktionieren nicht mehr; stattdessen Regex-Escape nutzen (`foo\ bar`).
+- **Pfade abgesichert** (`search.lua`, `wiki.lua`): Alle `:edit`/`:cd`-Aufrufe escapen Pfade jetzt über `vim.fn.fnameescape()` — Dateien mit Leerzeichen o. Ä. brechen nicht mehr.
+- **Projekt-Sortierung** (`search.lua`): `add_project` sortiert die Liste jetzt auch beim Hinzufügen strikt alphabetisch (vorher nur beim Entfernen via `dd`).
+- **Toter Export entfernt** (`core_tools.lua`): `toggle_mark_pin` wurde exportiert, existiert aber seit der Pinning-Entfernung (2026-05-06) nicht mehr.
+- **Arrow-Key-Guard** (`keymaps.lua`): `<UP>`/`<DOWN>` ohne Quickfix-Liste bewegen den Cursor jetzt normal, statt bei jedem Tastendruck "Ende der Liste" zu spammen.
+- **Robustes Git-Status-Parsing** (`git.lua`): Neue Helper-Funktion `parse_status_path` berücksichtigt Renames (`old -> new`) und von Git gequotete Pfade (Leerzeichen) — `s`/`u`/`l`/`CR` im Status-Picker greifen damit nicht mehr daneben.
+- **Verifiziert**: Alle geänderten Dateien compile-geprüft; Parsing-Logik per Smoke-Test (4 Fälle) bestätigt, Listen-Form von rg positiv getestet.
+- **Bewusst NICHT geändert**: nvim-treesitter (0 Parser, kein `vim.treesitter.start()`) — der Eigentümer entscheidet selbst zwischen Aktivieren und Entfernen.
+
 ## [2026-11-16] - Dokumentations-Überholung (Realitäts-Alignment)
 - **AGENTS.md erstellt**: Zentraler, maßgeblicher LLM-Kontext für alle Coding-Agenten. `GEMINI.md` ist seitdem nur noch ein Verweis darauf — das verhindert driftende Duplikate der Struktur-/Picker-Doku.
 - **README.md korrigiert**:

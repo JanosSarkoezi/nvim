@@ -44,7 +44,6 @@ M.git_stash         = git.git_stash
 
 -- Mark Manager
 M.set_mark_auto      = marks.set_mark_auto
-M.toggle_mark_pin    = marks.toggle_mark_pin
 M.show_marks         = marks.show_marks
 
 -- Misc / Hilfe

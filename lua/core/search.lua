@@ -21,6 +21,8 @@ function M.add_project()
         end
     end
     table.insert(projects, cwd)
+    -- Strikt alphabetisch halten (konsistent zum Entfernen via dd)
+    table.sort(projects)
     vim.fn.writefile(projects, projects_file)
     print("Projekt gepinnt: " .. cwd)
 end
@@ -34,7 +36,7 @@ function M.pinned_projects()
     end
     picker.open_picker(projects, "Gepinnte Projekte (dd=Entfernen)", function(choice)
         if choice then
-            vim.cmd("cd " .. choice)
+            vim.cmd("cd " .. vim.fn.fnameescape(choice))
             print("CWD gewechselt zu: " .. choice)
         end
     end, {
@@ -66,12 +68,13 @@ function M.multi_grep(args)
     end
     if query == "" then return end
     
-    local paths = ""
+    -- Listen-Form: umgeht die Shell komplett (keine Injection über den Query möglich);
+    -- Flags wie "-t py" bleiben als eigene Argumente weiterhin nutzbar.
+    local cmd = { "rg", "--vimgrep", "--smart-case", "--hidden" }
+    vim.list_extend(cmd, vim.split(query, "%s+", { trimempty = true }))
     for _, p in ipairs(projects) do
-        paths = paths .. " " .. vim.fn.shellescape(p)
+        table.insert(cmd, p)
     end
-    
-    local cmd = "rg --vimgrep --smart-case --hidden " .. query .. paths
     local results = vim.fn.systemlist(cmd)
     
     if #results == 0 then
@@ -82,7 +85,7 @@ function M.multi_grep(args)
     picker.open_picker(results, "Multi-Grep: " .. query, function(selected)
         local parts = vim.split(selected, ":")
         if #parts >= 3 then
-            vim.cmd("edit " .. parts[1])
+            vim.cmd("edit " .. vim.fn.fnameescape(parts[1]))
             vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
         end
     end, nil, true)
@@ -92,7 +95,7 @@ function M.find_files()
   local files = vim.fn.systemlist("fd --type f --strip-cwd-prefix --hidden --exclude .git")
   if #files == 0 then return end
   picker.open_picker(files, "Dateien finden", function(selected)
-    vim.cmd("edit " .. selected)
+    vim.cmd("edit " .. vim.fn.fnameescape(selected))
   end, nil, true)
 end
 
@@ -121,7 +124,7 @@ function M.find_projects()
     local results = vim.fn.systemlist(cmd)
     picker.open_picker(results, "Projekte", function(choice)
         if choice then
-            vim.cmd("cd " .. choice)
+            vim.cmd("cd " .. vim.fn.fnameescape(choice))
             print("Projekt gewechselt zu: " .. vim.fn.getcwd())
         end
     end, nil, true)
@@ -134,7 +137,10 @@ function M.live_grep(args)
     end
     if query == "" then return end
 
-    local cmd = "rg --vimgrep --smart-case --hidden --glob '!.git/*' " .. query
+    -- Listen-Form: umgeht die Shell komplett (keine Injection über den Query möglich);
+    -- Flags wie "-t py" bleiben als eigene Argumente weiterhin nutzbar.
+    local cmd = { "rg", "--vimgrep", "--smart-case", "--hidden", "--glob", "!.git/*" }
+    vim.list_extend(cmd, vim.split(query, "%s+", { trimempty = true }))
     local results = vim.fn.systemlist(cmd)
     if #results == 0 then
         print("Keine Treffer gefunden.")
@@ -143,7 +149,7 @@ function M.live_grep(args)
     picker.open_picker(results, "Grep: " .. query, function(selected)
         local parts = vim.split(selected, ":")
         if #parts >= 3 then
-            vim.cmd("edit " .. parts[1])
+            vim.cmd("edit " .. vim.fn.fnameescape(parts[1]))
             vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
         end
     end, nil, true)
@@ -163,7 +169,7 @@ function M.find_directories()
     if #dirs == 0 then return end
     picker.open_picker(dirs, "Verzeichnis wechseln", function(selected)
         if selected and selected ~= "" then
-            vim.cmd("cd " .. selected)
+            vim.cmd("cd " .. vim.fn.fnameescape(selected))
             print("CWD gewechselt zu: " .. vim.fn.getcwd())
         end
     end, nil, true)
@@ -186,7 +192,7 @@ function M.quickfix_to_picker()
     picker.open_picker(items, "Quickfix Bearbeiten", function(selected)
         local parts = vim.split(selected, ":")
         if #parts >= 3 then
-            vim.cmd("edit " .. parts[1])
+            vim.cmd("edit " .. vim.fn.fnameescape(parts[1]))
             vim.api.nvim_win_set_cursor(0, {tonumber(parts[2]), tonumber(parts[3]) - 1})
         end
     end, nil, true)

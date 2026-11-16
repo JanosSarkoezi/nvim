@@ -16,6 +16,7 @@ vim.api.nvim_create_autocmd('PackChanged', { callback = function(ev)
 end })
 vim.pack.add({ 'https://github.com/nvim-treesitter/nvim-treesitter' })
 vim.pack.add({ 'https://github.com/folke/tokyonight.nvim' })
+vim.pack.add({ 'https://github.com/brianhuster/live-preview.nvim' })
 vim.cmd[[colorscheme tokyonight]]
 
 vim.cmd([[
